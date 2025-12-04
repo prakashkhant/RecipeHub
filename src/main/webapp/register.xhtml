@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <title>Register - RecipeHub</title>
+        <h:outputStylesheet name="css/login.css"/>
+    </h:head>
+
+    <h:body styleClass="login-body">
+
+        <div class="container">
+
+            <div class="logo">
+                <h:link outcome="home" styleClass="brand">Healthy Recipe</h:link>
+            </div>
+
+            <div class="form-box">
+                <h2>Register</h2>
+
+                <h:form>
+
+                    <!-- FULL NAME -->
+                    <h:inputText id="fullname"
+                                 value="#{registerBean.fullname}"
+                                 styleClass="input"
+                                 pt:placeholder="Enter Full Name"
+                                 required="true"
+                                 requiredMessage="Full name is required">
+                        <f:validateRegex pattern="[A-Za-z ]*"/>
+                    </h:inputText>
+                    <h:message for="fullname" style="color:red; font-size:13px;"/>
+
+                    <!-- USERNAME -->
+                    <h:inputText id="username"
+                                 value="#{registerBean.username}"
+                                 styleClass="input"
+                                 pt:placeholder="Enter Username"
+                                 required="true"
+                                 requiredMessage="Username is required"/>
+                    <h:message for="username" style="color:red; font-size:13px;"/>
+
+                    <!-- EMAIL -->
+                    <h:inputText id="email"
+                                 value="#{registerBean.email}"
+                                 styleClass="input"
+                                 pt:placeholder="Enter Email"
+                                 required="true"
+                                 requiredMessage="Email is required">
+                        
+                    </h:inputText>
+                    <h:message for="email" style="color:red; font-size:13px;"/>
+
+
+                    <!-- PASSWORD -->
+                    <h:inputSecret id="password"
+                                   value="#{registerBean.password}"
+                                   styleClass="input"
+                                   pt:placeholder="Enter Password"
+                                   required="true"
+                                   requiredMessage="Password is required">
+                        <f:validateLength minimum="6" />
+                    </h:inputSecret>
+                    <h:message for="password" style="color:red; font-size:13px;"/>
+
+                    <h:commandButton value="Register"
+                                     styleClass="btn"
+                                     action="#{registerBean.register}"/>
+
+                    <div class="auth-link">
+                        <a href="login.jsf">Already have an account? Login</a>
+                    </div>
+
+                </h:form>
+            </div>
+        </div>
+
+    </h:body>
+</html>

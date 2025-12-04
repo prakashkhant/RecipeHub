@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Recipe Details</title>
+    <h:outputStylesheet name="css/main.css"/>
+</h:head>
+
+<h:body onload="#{recipeBean.loadRecipe()}">
+
+    <div class="navbar">
+        <a href="home.jsf"><strong>Healthy Recipes</strong></a>
+    </div>
+
+    <div class="details-container">
+        <h:graphicImage library="img" name="#{recipeBean.selectedRecipe.imageUrl}"
+                        class="details-img"/>
+
+        <h1 class="details-title">#{recipeBean.selectedRecipe.title}</h1>
+
+        <p><b>Category:</b> #{recipeBean.selectedRecipe.category}</p>
+        <p><b>Difficulty:</b> #{recipeBean.selectedRecipe.difficulty}</p>
+        <p><b>Created:</b> #{recipeBean.selectedRecipe.createdAt}</p>
+
+        <h2>Description</h2>
+        <p>#{recipeBean.selectedRecipe.description}</p>
+
+        <h2>Steps</h2>
+        <pre>#{recipeBean.selectedRecipe.steps}</pre>
+
+        <h:link outcome="home.jsf" styleClass="btn-back">← Back</h:link>
+    </div>
+
+</h:body>
+</html>

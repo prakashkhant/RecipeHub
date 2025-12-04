@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <title>Healthy Recipe Hub</title>
+        <h:outputStylesheet name="css/main.css" />
+
+    </h:head>
+
+    <h:body>
+
+        <!-- NAVBAR -->
+        <div class="navbar">
+
+            <div class="nav-left">
+                <a href="home.jsf"><strong>Healthy Recipes</strong></a>
+                <a href="recipes.jsf">Recipes</a>
+                <a href="about.jsf">About</a>
+                <a href="contact.jsf">Contact</a>
+            </div>
+
+            <a href="login.jsf" class="login-btn">Login / Register</a>
+        </div>
+
+
+        <!-- HERO -->
+        <div class="hero">
+            <div>
+                <h1>Welcome to Healthy Recipe Hub</h1>
+                <p>Your best place to explore delicious, healthy and category-wise recipes.</p>
+            </div>
+            <h:graphicImage library="img" name="hero.png"
+                            alt="Dish Image"
+                            styleClass="hero-img"/>
+        </div>
+
+        <!-- CATEGORIES -->
+        <div class="section-title">Categories :</div>
+
+        <div class="category-box">
+            <ui:repeat value="#{homeBean.categoryList}" var="cat">
+                <a href="category.jsf?cat=#{cat}" class="category-btn">#{cat}</a>
+            </ui:repeat>
+        </div>
+
+        <!-- RECENT RECIPES -->
+        <div class="section-title">Recent Recipes :</div>
+        <div class="recipes-box">
+            <ui:repeat value="#{homeBean.recentRecipes}" var="r">
+                 <h:link outcome="recipeDetails">
+                <div class="recipe-card">
+                    <h:graphicImage library="img" name="#{r.imageUrl}"
+                                    alt="Dish Image"
+                                    />
+                    <div class="recipe-title">#{r.title}</div>
+                </div>
+                     </h:link>
+            </ui:repeat>
+        </div>
+       
+
+        <!-- FOOTER -->
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-container">
+
+                <!-- ABOUT US -->
+                <div class="footer-col">
+                    <h3>About Us</h3>
+                    <p>This mini project is made by<br/> <b>Prakash S Khant</b>.</p>
+                </div>
+
+                <!-- QUICK LINKS -->
+                <div class="footer-col">
+                    <h3>Links</h3>
+                    <a href="home.jsf">Home</a><br/>
+                    <a href="about.jsf">About Us</a><br/>
+                    <a href="contact.jsf">Contact Us</a><br/>
+                    <a href="recipes.jsf">Recipes</a>
+                </div>
+
+                <!-- CONTACT INFO -->
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <p>
+                        XT9 Developers<br/>
+                        +91 9727669930<br/>
+                        xt9developers01@gmail.com
+                    </p>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 Prakash's Healthy Recipes – Authentic &amp; Pure Vegetarian Recipes Trusted Since 2024
+        </div>
+    </h:body>
+</html>

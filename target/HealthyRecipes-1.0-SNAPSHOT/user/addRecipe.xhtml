@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<h:head>
+    <title>Add Recipe - Healthy Recipe</title>
+    <h:outputStylesheet name="css/dashboard.css" />
+</h:head>
+
+<h:body>
+
+<div class="sidebar">
+    <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
+
+    <nav class="menu">
+        <ul>
+            <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
+            <li><h:link outcome="/user/addRecipe" styleClass="nav-link active">Add Recipe</h:link></li>
+            <li><h:link outcome="/user/profile" styleClass="nav-link">Profile</h:link></li>
+        </ul>
+    </nav>
+
+    <div class="logout-container">
+        <h:form>
+            <h:commandLink value="Logout"
+                           action="#{loginBean.logout}"
+                           onclick="return confirm('Are you sure?');"
+                           styleClass="logout-btn"/>
+        </h:form>
+    </div>
+</div>
+
+
+<div class="main-content">
+
+    <h1>Add Recipe</h1>
+
+    <h:form enctype="multipart/form-data" styleClass="form-card">
+        <h:messages errorClass="msg-error"
+                    infoClass="msg-success"
+                    layout="list"
+                    style="margin-bottom:10px;" />
+
+        <div class="form-group">
+            <label>Title</label>
+            <h:inputText value="#{recipeBean.title}" required="true" styleClass="form-input"/>
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <h:inputTextarea value="#{recipeBean.description}" rows="3" styleClass="form-input" />
+        </div>
+
+        <div class="form-group">
+            <label>Steps</label>
+            <h:inputTextarea value="#{recipeBean.steps}" rows="6" styleClass="form-input"/>
+        </div>
+
+        <div class="form-group">
+            <label>Category</label>
+           <h:selectOneMenu value="#{recipeBean.category}" styleClass="form-input" required="true">
+    <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
+    <f:selectItem itemLabel="Veg" itemValue="Veg"/>
+    <f:selectItem itemLabel="Non-Veg" itemValue="Non-Veg"/>
+    <f:selectItem itemLabel="Breakfast" itemValue="Breakfast"/>
+    <f:selectItem itemLabel="Soup" itemValue="Soup"/>
+    <f:selectItem itemLabel="Sweets" itemValue="Sweets"/>
+</h:selectOneMenu>
+
+        </div>
+
+        <div class="form-group">
+            <label>Difficulty</label>
+           <h:selectOneMenu value="#{recipeBean.difficulty}" styleClass="form-input" required="true">
+    <f:selectItem itemLabel="Select Difficulty" itemValue="" noSelectionOption="true"/>
+    <f:selectItem itemLabel="Easy" itemValue="EASY"/>
+    <f:selectItem itemLabel="Medium" itemValue="MEDIUM"/>
+    <f:selectItem itemLabel="Hard" itemValue="HARD"/>
+</h:selectOneMenu>
+
+        </div>
+
+        <div class="form-group">
+            <label>Select Image</label>
+            <h:inputFile value="#{recipeBean.imageFile}" styleClass="form-input"/>
+        </div>
+
+        <div class="form-group">
+            <label>Video URL (Optional)</label>
+            <h:inputText value="#{recipeBean.videoUrl}" styleClass="form-input"/>
+        </div>
+
+        <div class="btn-container">
+            <h:commandButton value="Submit Recipe"
+                             action="#{recipeBean.saveRecipe}"
+                             styleClass="btn-primary"/>
+        </div>
+    </h:form>
+
+</div>
+
+</h:body>
+</html>

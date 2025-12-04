@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+>
+
+<h:head>
+    <title>Login - RecipeHub</title>
+    <h:outputStylesheet name="css/login.css" />
+
+</h:head>
+
+<h:body styleClass="login-body">
+
+    <div class="container">
+        <div class="logo"> <h:form>
+                <h:link outcome="home" styleClass="brand">Healthy Recipe</h:link>
+            </h:form></div>
+
+        <div class="form-box">
+            <h2>Login</h2>
+
+            <h:form>
+   <h:messages style="color:red; margin-bottom:10px;" />
+                <!-- Bind values to CDI bean -->
+                <h:inputText value="#{loginBean.username}" 
+                             styleClass="input"
+                             required="true"
+                             requiredMessage="Username required"
+                             pt:placeholder="Enter Username" />
+
+                <h:inputSecret value="#{loginBean.password}"
+                               styleClass="input"
+                               required="true"
+                               requiredMessage="Password required"
+                               pt:placeholder="Enter Password" />
+
+                <h:commandButton value="Login"
+                                 styleClass="btn"
+                                 action="#{loginBean.login}" />
+                <br></br>
+            <div class="auth-link">
+    <a href="register.jsf">Don't have an account? Register</a>
+</div>
+
+
+            </h:form>
+        </div>
+    </div>
+
+</h:body>
+</html>

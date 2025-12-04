@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<h:head>
+    <title>Profile - Healthy Recipe</title>
+    <h:outputStylesheet name="css/dashboard.css" />
+</h:head>
+
+<h:body>
+
+<div class="sidebar">
+    <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
+
+    <nav class="menu">
+        <ul>
+            <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
+            <li><h:link outcome="/user/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+            <li><h:link outcome="/user/profile" styleClass="nav-link active">Profile</h:link></li>
+        </ul>
+    </nav>
+
+    <div class="logout-container">
+        <h:form>
+            <h:commandLink value="Logout"
+                           action="#{loginBean.logout}"
+                           onclick="return confirm('Are you sure?');"
+                           styleClass="logout-btn"/>
+        </h:form>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <h1>Profile</h1>
+
+    <h:form styleClass="form-card">
+        <h:messages layout="list" infoClass="msg-success" errorClass="msg-error" />
+
+        <div class="form-group">
+            <label>Username</label>
+            <h:inputText value="#{profileBean.currentUser.userName}" styleClass="form-input" disabled="true" />
+        </div>
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <h:inputText value="#{profileBean.currentUser.fullName}" styleClass="form-input"/>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <h:inputText value="#{profileBean.currentUser.email}" styleClass="form-input"/>
+        </div>
+
+       <div class="form-group">
+    <label>New Password</label>
+    <h:inputSecret value="#{profileBean.newPassword}" styleClass="form-input"
+                   pt:placeholder="Leave blank if no change" />
+</div>
+
+<div class="form-group">
+    <label>Confirm Password</label>
+    <h:inputSecret value="#{profileBean.confirmPassword}" styleClass="form-input"
+                   pt:placeholder="Re-enter new password" />
+</div>
+
+
+        <div class="btn-container">
+            <h:commandButton value="Update Profile"
+                             action="#{profileBean.updateProfile}"
+                             styleClass="btn-primary" />
+        </div>
+
+    </h:form>
+
+</div>
+
+</h:body>
+</html>
