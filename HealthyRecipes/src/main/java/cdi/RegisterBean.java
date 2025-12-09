@@ -7,9 +7,12 @@
 package cdi;
 
 import Entity.Users;
+import ejb.AdminBeanLocal;
 import ejb.UserBeanLocal;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import java.io.Serializable;
 
@@ -25,20 +28,41 @@ public class RegisterBean implements Serializable {
 
     @EJB
     private UserBeanLocal userBean;
+    
+    @EJB
+private AdminBeanLocal adminBean;
 
-    public String register() {
+public String register() {
 
-        Users u = new Users();
-        u.setFullName(fullname);
-        u.setUserName(username);
-        u.setEmail(email);
-        u.setPassword(password);
-        u.setRole(role);
-
-        userBean.registerUser(u);
-System.out.println(u);
-        return "/login.jsf?faces-redirect=true";
+    // Username already exists? ❌
+    if (userBean.isUsernameExists(username)) {
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Username already exists! Please choose another.", null));
+        return null;
     }
+
+    // Email already exists? ❌
+    if (userBean.isEmailExists(email)) {
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Email already registered! Try a different email.", null));
+        return null;
+    }
+
+    Users u = new Users();
+    u.setFullName(fullname);
+    u.setUserName(username);
+    u.setEmail(email);
+    u.setPassword(password);
+    u.setRole(role);
+    u.setCreatedAt(new java.util.Date());
+
+    userBean.registerUser(u);
+adminBean.logActivity(u, "Registered new account");
+
+    return "/login.jsf?faces-redirect=true";
+}
 
     // Getters & Setters
     public String getFullname() { return fullname; }

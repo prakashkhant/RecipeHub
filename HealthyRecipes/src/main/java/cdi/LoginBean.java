@@ -5,6 +5,7 @@
 package cdi;
 
 import Entity.Users;
+import ejb.AdminBeanLocal;
 import ejb.UserBeanLocal;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
@@ -23,6 +24,8 @@ public class LoginBean implements Serializable {
 
     @EJB
     private UserBeanLocal userBean;
+@EJB
+private AdminBeanLocal adminBean;
 
 
 public String login() {
@@ -30,21 +33,20 @@ public String login() {
     System.out.println("Trying login: " + loggedUser);
 
     if (loggedUser != null) {
-        if (loggedUser.getRole().equalsIgnoreCase("admin")) {
-            return "admin/adminDashboard.jsf?faces-redirect=true";
-        } else {
-            return "user/userDashboard.jsf?faces-redirect=true";
-        }
+        adminBean.logActivity(loggedUser, "User logged in");
+
+        return "home.jsf?faces-redirect=true"; // Always go back to home page
     }
 
     FacesContext.getCurrentInstance().addMessage(
-            null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-            "Username or Password incorrect!", null)
+        null,
+        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+        "Username or Password incorrect!", null)
     );
 
     return null; // stay on same page, show error
 }
+
 public void redirectIfNotLoggedIn() throws IOException {
     if (loggedUser == null) {
         FacesContext.getCurrentInstance()
@@ -54,8 +56,11 @@ public void redirectIfNotLoggedIn() throws IOException {
 }
 
 public String logout() {
+        adminBean.logActivity(loggedUser, "User logged out");
+
     loggedUser = null;
     FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+
     return "/home?faces-redirect=true";
 }
 
@@ -78,4 +83,30 @@ public String logout() {
     public Users getLoggedUser() {
     return loggedUser;
 }
+    
+    
+//    for username on home and other pages
+  public String goToDashboard() {
+    if (loggedUser == null) {
+        return "login?faces-redirect=true";
+    }
+    
+    if ("admin".equalsIgnoreCase(loggedUser.getRole())) {
+        return "admin/adminDashboard?faces-redirect=true";
+    }
+    return "user/userDashboard?faces-redirect=true";
+}
+//    for username on home and other pages
+  public String goToMyActivity() {
+    if (loggedUser == null) {
+        return "login?faces-redirect=true";
+    }
+    
+    if ("admin".equalsIgnoreCase(loggedUser.getRole())) {
+        return "admin/adminActivity?faces-redirect=true";
+    }
+    return "user/activity?faces-redirect=true";
+}
+
+
 }

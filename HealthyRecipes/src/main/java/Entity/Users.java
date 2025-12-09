@@ -43,12 +43,6 @@ import java.util.Date;
     @NamedQuery(name = "Users.findByCreatedAt", query = "SELECT u FROM Users u WHERE u.createdAt = :createdAt")})
 public class Users implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "user_id")
-    private Integer userId;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 100)
@@ -71,6 +65,15 @@ public class Users implements Serializable {
     @Size(max = 8)
     @Column(name = "role")
     private String role;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Collection<ActivityLog> activityLogCollection;
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "user_id")
+    private Integer userId;
     @Basic(optional = false)
     
     @Column(name = "created_at")
@@ -124,29 +127,6 @@ public class Users implements Serializable {
         this.fullName = fullName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public Date getCreatedAt() {
         return createdAt;
@@ -215,6 +195,41 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "Entity.Users[ userId=" + userId + " ]";
+    }
+
+ 
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @XmlTransient
+    public Collection<ActivityLog> getActivityLogCollection() {
+        return activityLogCollection;
+    }
+
+    public void setActivityLogCollection(Collection<ActivityLog> activityLogCollection) {
+        this.activityLogCollection = activityLogCollection;
     }
     
 }

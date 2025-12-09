@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <title>Admin Activity</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+        <style>
+           .header {
+    background: #ffffff;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e3f3e;
+    animation: blink 1.2s infinite ease-in-out;
+}
+
+/* Blinking animation */
+@keyframes blink {
+    0 { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+            </style>
+    </h:head>
+
+    <h:body>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
+                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
+                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link active">All Activity</h:link></li>
+                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!--            <h:form styleClass="filter-box">
+            
+                            <label>Filter:</label>
+                            <h:selectOneMenu value="#{adminDashboardBean.activityFilter}">
+                                <f:selectItem itemLabel="All" itemValue="ALL" />
+                                <f:selectItem itemLabel="Today" itemValue="TODAY" />
+                                <f:selectItem itemLabel="Last 7 Days" itemValue="WEEK" />
+                                <f:selectItem itemLabel="This Month" itemValue="MONTH" />
+                                <f:ajax event="change" render="@form :activityTable" />
+                            </h:selectOneMenu>
+            
+                            <label>User:</label>
+                            <h:selectOneMenu value="#{adminDashboardBean.filterUserId}">
+                                <f:selectItem itemLabel="All Users" itemValue="0" />
+                                <f:selectItems value="#{adminDashboardBean.allUsersPaginated}"
+                                               var="u"
+                                               itemLabel="#{u.fullName}"
+                                               itemValue="#{u.userId}" />
+                                <f:ajax event="change" render="@form :activityTable" />
+                            </h:selectOneMenu>
+            
+                        </h:form>-->
+            <div class="header">
+                <h2>Real-Time Records of System Operations, User Actions, and Admin Activities</h2>
+            </div>
+            <div class="table-box">
+                <h1>Recent Activities</h1>
+
+                <h:form>
+                    <table id="activityTable">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Activity</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminDashboardBean.allActivities}" var="a">
+                                <tr>
+                                    <td>#{a.userId.fullName}</td>
+                                    <td>#{a.activity}</td>
+                                    <td>#{a.timestamp}</td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+
+        </div>
+
+    </h:body>
+</html>

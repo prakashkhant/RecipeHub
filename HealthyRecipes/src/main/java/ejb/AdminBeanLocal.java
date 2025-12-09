@@ -9,6 +9,7 @@
  */
 package ejb;
 
+import Entity.ActivityLog;
 import jakarta.ejb.Local;
 import java.util.List;
 import Entity.Users;
@@ -24,5 +25,9 @@ public interface AdminBeanLocal {
     String deleteRecipe(int recipeId);
 
     String registerAdmin(Users admin);
+    void logActivity(Users user, String activity);
+List<ActivityLog> getAllActivities();
+
+
 }
 

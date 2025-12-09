@@ -1,0 +1,113 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <h:head>
+        <title>User Management - Admin</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+    </h:head>
+
+    <h:body>
+
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Dashboard</h:link></li>
+                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link active">User Management</h:link></li>
+                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
+                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
+                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </div>
+
+
+        <div class="main-content">
+
+            <div class="header">
+                <h1>Manage Users</h1>
+            </div>
+
+            <div class="cards">
+                <div class="card"><h3>Total Users</h3><h2>#{adminDashboardBean.totalUsers}</h2></div>
+            </div>
+
+            <div class="table-box">
+                <h3>Users List</h3>
+
+                <h:form>
+                    <h:messages id="msg"
+                                layout="list"
+                                style="margin: 10px 0;"
+                                infoClass="msg-success"
+                                errorClass="msg-error" />
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <ui:repeat value="#{adminDashboardBean.allUsersPaginated}" var="u">
+                                <tr>
+                                    <td>#{u.userId}</td>
+                                    <td>#{u.userName}</td>
+                                    <td>#{u.fullName}</td>
+                                    <td>#{u.role}</td>
+                                    <td>
+                                        <div class="action-buttons">
+
+                                            <h:commandButton value="Delete"
+                                                             styleClass="delete-btn"
+                                                             action="#{adminDashboardBean.deleteUser(u.userId)}"
+                                                             onclick="return confirm('Delete this user?');" />
+
+                                            <h:commandButton value="Change Role"
+                                                             styleClass="role-btn"
+                                                             action="#{adminDashboardBean.toggleUserRole(u.userId)}" />
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <h:commandButton value="Previous" action="#{adminDashboardBean.previousUserPage}" disabled="#{adminDashboardBean.userPage == 1}" />
+                        <span>Page #{adminDashboardBean.userPage}</span>
+                        <h:commandButton value="Next" action="#{adminDashboardBean.nextUserPage}" />
+                    </div>
+
+                </h:form>
+
+            </div>
+
+        </div>
+
+    </h:body>
+</html>

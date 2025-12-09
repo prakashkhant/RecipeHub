@@ -37,6 +37,7 @@ import java.util.Date;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Recipes.findAll", query = "SELECT r FROM Recipes r"),
+    @NamedQuery(name = "Recipes.findAllDesc", query = "SELECT r FROM Recipes r ORDER BY r.createdAt DESC"),
     @NamedQuery(name = "Recipes.findByRecipeId", query = "SELECT r FROM Recipes r WHERE r.recipeId = :recipeId"),
     @NamedQuery(name = "Recipes.findByTitle", query = "SELECT r FROM Recipes r WHERE r.title = :title"),
     @NamedQuery(name = "Recipes.findByCategory", query = "SELECT r FROM Recipes r WHERE r.category = :category"),
@@ -65,8 +66,8 @@ public class Recipes implements Serializable {
     @Column(name = "category")
     private String category;
     @Lob
-@Column(name = "steps")
-private String steps;
+    @Column(name = "steps")
+    private String steps;
 
     @Size(max = 6)
     @Column(name = "difficulty")
@@ -77,7 +78,7 @@ private String steps;
     @Size(max = 255)
     @Column(name = "video_url")
     private String videoUrl;
-    
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "created_at")
@@ -133,21 +134,21 @@ private String steps;
         this.description = description;
     }
 
-  public String getCategory() {
-    return category;
-}
+    public String getCategory() {
+        return category;
+    }
 
-public void setCategory(String category) {
-    this.category = category;
-}
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-public String getSteps() {
-    return steps;
-}
+    public String getSteps() {
+        return steps;
+    }
 
-public void setSteps(String steps) {
-    this.steps = steps;
-}
+    public void setSteps(String steps) {
+        this.steps = steps;
+    }
 
     public String getDifficulty() {
         return difficulty;
@@ -172,8 +173,6 @@ public void setSteps(String steps) {
     public void setVideoUrl(String videoUrl) {
         this.videoUrl = videoUrl;
     }
-
- 
 
     public Date getCreatedAt() {
         return createdAt;
@@ -217,8 +216,6 @@ public void setSteps(String steps) {
     public void setRatingsCollection(Collection<Ratings> ratingsCollection) {
         this.ratingsCollection = ratingsCollection;
     }
-
-
 
     @XmlTransient
     public Collection<Likes> getLikesCollection() {

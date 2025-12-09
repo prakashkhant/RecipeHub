@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:pt="jakarta.faces.passthrough">
+
+    <h:head>
+        <title>Contact Us - Healthy Recipes</title>
+        <h:outputStylesheet name="css/main.css" />
+    </h:head>
+
+    <h:body>
+
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <div class="nav-left">
+                <a href="home.jsf" class="web-title">Healthy Recipes</a>
+                <a href="recipes.jsf">Recipes</a>
+                <a href="about.jsf">About</a>
+                <a href="contact.jsf" class="active">Contact</a>
+            </div>
+
+           
+            <!-- If NOT logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser == null}">
+                <a href="login.jsf" class="login-btn">Login / Register</a>
+            </h:panelGroup>
+
+            <!-- If Logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser != null}" styleClass="user-menu">
+                <span class="username">
+                    Hello, <span class="username-color">#{empty loginBean.loggedUser.fullName ? loginBean.loggedUser.userName : loginBean.loggedUser.fullName} </span> ▼
+                </span>
+
+                <div class="dropdown">
+                    <h:form>
+                        <h:commandLink value="Dashboard" action="#{loginBean.goToDashboard}" styleClass="dropdown-link"/>
+                        <h:commandLink value="Logout" action="#{loginBean.logout}" styleClass="dropdown-link"/>
+                    </h:form>
+                </div>
+            </h:panelGroup>
+
+        </div>
+
+        <!-- CONTACT SECTION -->
+        <div class="contact-container">
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h1>Get In Touch</h1>
+                <p>
+                    Have any questions or want to share your own recipe?
+                    We’d love to hear from you! 🌟
+                </p>
+
+                <ul>
+                    <li><strong>Phone:</strong> +91 9727669930</li>
+                    <li><strong>Email:</strong> xt9developers01@gmail.com</li>
+                    <li><strong>Address:</strong> Gujarat, India 🇮🇳</li>
+                </ul>
+
+                <p>Follow us for tasty &amp; healthy updates!</p>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form-box">
+                <h2>Send Us a Message</h2>
+
+                <h:form styleClass="contact-form">
+                    <h:messages style="color:red; margin-bottom:10px;" />
+
+                    <h:inputText  
+                        value="#{contactBean.name}"
+                        styleClass="input-field"
+                        required="true"
+                        requiredMessage="Name is required"
+                        pt:placeholder="Your Name" />
+
+                    <h:inputText  
+                        value="#{contactBean.email}"
+                        styleClass="input-field"
+                        required="true"
+                        requiredMessage="Email is required"
+                        pt:placeholder="Your Email" />
+
+                    <h:inputTextarea 
+                        value="#{contactBean.message}"
+                        styleClass="input-field message-field"
+                        required="true"
+                        requiredMessage="Message is required"
+                        pt:placeholder="Your Message"
+                        rows="4" />
+
+                    <h:commandButton value="Submit"
+                                     styleClass="submit-btn"
+                                     action="#{contactBean.send}" />
+                </h:form>
+
+            </div>
+
+
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <div class="footer-container">
+
+                <div class="footer-col">
+                    <h3>About Us</h3>
+                    <p>Healthy Recipe Hub — Eat Healthy, Stay Healthy!</p>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Links</h3>
+                    <a href="home.jsf">Home</a><br/>
+                    <a href="about.jsf">About Us</a><br/>
+                    <a href="contact.jsf">Contact Us</a><br/>
+                    <a href="recipes.jsf">Recipes</a>
+                </div>
+
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <p>
+                        XT9 Developers<br/>
+                        +91 9727669930<br/>
+                        xt9developers01@gmail.com
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 Prakash's Healthy Recipes – Trusted Since 2025
+        </div>
+
+    </h:body>
+</html>

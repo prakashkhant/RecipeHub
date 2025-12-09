@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <title>User Activity</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+    </h:head>
+
+    <h:body>
+
+        <!-- Sidebar Include -->
+        <div class="sidebar">
+            <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
+                    <li><h:link outcome="/user/addRecipe" styleClass="nav-link ">Add Recipe</h:link></li>
+                    <li><h:link outcome="/user/profile" styleClass="nav-link">Profile</h:link></li>
+                    <li><h:link outcome="/user/likedRecipes" styleClass="nav-link ">Liked Recipes</h:link></li>
+                    <li><h:link outcome="/user/activity" styleClass="nav-link active">📌 My Activity</h:link></li>
+
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </div>
+
+
+        <div class="main-content">
+            <h2>📌 My Activity</h2>
+
+            <!-- Comments Table -->
+            <div class="table-box">
+                <h3>📝 My Comments</h3>
+                <h:form id="commentsTable">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Recipe</th>
+                                <th>Comment</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <ui:repeat value="#{userDashboardBean.userComments}" var="c">
+                                <tr>
+                                    <td>
+                                        <h:graphicImage library="img" 
+                                                        name="#{c.recipeId.imageUrl}"
+                                                        style="width:60px; border-radius:6px;"/>
+                                        <br/>#{c.recipeId.title}
+                                    </td>
+                                    <td>#{c.text}</td>
+                                    <td>#{c.createdAt}</td>
+                                    <td>
+                                     
+
+                                        <h:commandButton value="Delete"
+                                                         action="#{userDashboardBean.deleteComment(c.commentId)}"
+                                                         onclick="return confirm('Delete this comment?');"
+                                                         styleClass="btn-danger">
+                                            <f:ajax render="commentsTable"/>
+                                        </h:commandButton>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+
+            <!-- Liked Recipes Table -->
+            <div class="table-box">
+                <h3>❤️ Liked Recipes</h3>
+
+                <h:form>
+                    <table class="dashboard-table">
+                        <h:panelGroup rendered="#{empty userDashboardBean.likedRecipes}">
+                            <div class="no-data-msg">
+                                No Recipes Liked Yet! ❤️<br />
+                                Go like some delicious recipes!
+                            </div>
+                        </h:panelGroup>
+
+                        <thead>
+                            <tr>
+                                <th>Recipe</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <ui:repeat value="#{userDashboardBean.likedRecipes}" var="r">
+                                <tr>
+                                    <td>
+                                        <h:graphicImage library="img" 
+                                                        name="#{r.imageUrl}"
+                                                        style="width:60px; border-radius:6px;"/>
+                                        <br/>#{r.title}
+                                    </td>
+                                    <td>
+                                        <h:commandButton 
+                                            action="#{recipeBean.removeLike(r.recipeId)}"
+                                            value="💔 Remove"
+                                            onclick="return confirm('Are you sure you want to remove this recipe from liked list?');"
+
+                                            styleClass="remove-like-btn">
+                                            <f:ajax render="@all" />
+                                        </h:commandButton>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+        </div>
+        <!-- Popup for Editing Comment -->
+       
+
+    </h:body>
+</html>

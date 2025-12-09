@@ -17,13 +17,16 @@
         <div class="sidebar">
             <h:form>
 <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-            </h:form>
 
+            </h:form>
             <nav class="menu">
                 <ul>
                     <li><h:link outcome="/user/userDashboard" styleClass="nav-link active">Dashboard</h:link></li>
                     <li><h:link outcome="/user/addRecipe" styleClass="nav-link ">Add Recipe</h:link></li>
-                    <li><h:link outcome="/user/profile" styleClass="nav-link">Profile</h:link></li>
+                    <li><h:link outcome="/user/profile" styleClass="nav-link">Update Profile</h:link></li>
+<li><h:link outcome="/user/likedRecipes" styleClass="nav-link">Liked Recipes</h:link></li>
+<li><h:link outcome="/user/activity" styleClass="nav-link">📌 My Activity</h:link></li>
+
                 </ul>
             </nav>
 
@@ -85,13 +88,12 @@
                                     <td>#{r.createdAt}</td>
                                     <td>
                                         <h:commandLink action="#{recipeBean.editRecipe(r.recipeId)}"
-               styleClass="edit-btn">Edit</h:commandLink>
-
+               styleClass="btn-edit btn-action">Edit</h:commandLink> |
                                         <h:commandLink 
                                             value="Delete" 
                                             action="#{userDashboardBean.deleteRecipe(r.recipeId)}"
                                             onclick="return confirm('Are you sure you want to delete this recipe?');"
-                                            styleClass="action-btn delete-btn">
+                                            styleClass="btn-delete btn-action">
                                             <f:ajax render="@form" />
                                         </h:commandLink>
                                     </td>

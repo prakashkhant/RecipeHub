@@ -59,12 +59,5 @@ public class UserResource {
         return userBean.likeRecipe(recipeId, userId);
     }
 
-    @POST
-    @Path("/comment/{recipeId}/{userId}")
-    public String addComment(
-            @PathParam("recipeId") int recipeId,
-            @PathParam("userId") int userId,
-            String commentText) {
-        return userBean.addComment(recipeId, userId, commentText);
-    }
+   
 }

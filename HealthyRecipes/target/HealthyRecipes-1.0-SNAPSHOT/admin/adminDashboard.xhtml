@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <h:head>
+        <title>Admin Dashboard - Healthy Recipes</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+    </h:head>
+
+    <h:body>
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link active">Admin Dashboard</h:link></li>
+                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
+                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
+                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn" />
+                </h:form>
+            </div>
+        </div>
+
+        <div class="main-content">
+
+            <div class="header">
+                <h1>Hello, #{loginBean.loggedUser.fullName}! 👋</h1>
+
+                <h:form>
+                    <h:link value="+ Add Recipe"
+                            outcome="/admin/addRecipe"
+                            styleClass="btn-primary" />
+                </h:form>
+
+            </div>
+            <div class="cards">
+                <div class="card"><h3>Total Users</h3><h2>#{adminDashboardBean.totalUsers}</h2></div>
+                <div class="card"><h3>Total Recipes</h3><h2>#{adminDashboardBean.totalRecipes}</h2></div>
+            </div>
+
+            <div class="table-box">
+                <h1>All Users</h1>
+
+                <h:form>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminDashboardBean.allUsersPaginated}" var="u">
+
+                                <tr>
+                                    <td>#{u.userId}</td>
+                                    <td>#{u.fullName}</td>
+                                    <td>#{u.role}</td>
+                                    <td>
+                                        <h:commandButton value="Delete"
+                                                         styleClass="delete-btn"
+                                                         action="#{adminDashboardBean.deleteUser(u.userId)}"
+                                                         onclick="return confirm('Delete this user?');" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <h:commandButton value="Previous" action="#{adminDashboardBean.previousUserPage}" disabled="#{adminDashboardBean.userPage == 1}" />
+                        <span>Page #{adminDashboardBean.userPage}</span>
+                        <h:commandButton value="Next" action="#{adminDashboardBean.nextUserPage}" />
+                    </div>
+
+                </h:form>
+            </div>
+
+            <div class="table-box">
+                <h1>All Recipes </h1>  
+
+                <h:form>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Difficulty</th>
+                                <th>Owner</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminDashboardBean.allRecipesPaginated}" var="r">
+                                <tr>
+                                    <td>#{r.recipeId}</td>
+                                    <td>#{r.title}</td>
+                                    <td>#{r.category}</td>
+                                    <td>#{r.difficulty}</td>
+                                    <td>#{r.userId.fullName}</td>
+                                    <td>
+                                        <!-- EDIT -->
+                                        <h:commandLink value="✏ Edit"
+                                                       action="#{recipeBean.adminEditRecipe(r.recipeId)}"
+                                                       styleClass="edit-btn btn-action" />
+
+
+                                        <!-- DELETE -->
+                                        <h:commandButton value="Delete"
+                                                         styleClass="delete-btn btn-action"
+                                                         action="#{adminDashboardBean.deleteRecipe(r.recipeId)}"
+                                                         onclick="return confirm('Delete recipe?');" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <h:commandButton value="Previous" action="#{adminDashboardBean.previousRecipePage}" disabled="#{adminDashboardBean.recipePage == 1}" />
+                        <span>Page #{adminDashboardBean.recipePage}</span>
+                        <h:commandButton value="Next" action="#{adminDashboardBean.nextRecipePage}" />
+                    </div>
+
+                </h:form>
+            </div>
+
+        </div>
+    </h:body>
+</html>

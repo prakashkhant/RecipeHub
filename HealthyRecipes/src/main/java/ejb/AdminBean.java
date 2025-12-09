@@ -4,11 +4,13 @@
  */
 package ejb;
 
+import Entity.ActivityLog;
 import Entity.Users;
 import Entity.Recipes;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.Date;
 import java.util.List;
 
 @Stateless
@@ -52,4 +54,37 @@ public class AdminBean implements AdminBeanLocal {
         em.persist(admin);
         return "Admin Registered!";
     }
+
+@Override
+public void logActivity(Users user, String activity) {
+    ActivityLog log = new ActivityLog();
+    log.setUserId(user);
+    log.setActivity(activity);
+    log.setTimestamp(new Date());
+    em.persist(log);
+}
+
+@Override
+public List<ActivityLog> getAllActivities() {
+    return em.createQuery(
+        "SELECT a FROM ActivityLog a ORDER BY a.timestamp DESC",
+        ActivityLog.class
+    ).getResultList();
+}
+
+
+// Helpers
+    private boolean isToday(Date date) {
+        return date.after(new Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000));
+    }
+
+    private boolean isLast7Days(Date date) {
+        return date.after(new Date(System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000));
+    }
+
+    private boolean isThisMonth(Date date) {
+        Date monthAgo = new Date(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000);
+        return date.after(monthAgo);
+    }
+
 }

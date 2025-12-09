@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>About Us - Healthy Recipes</title>
+    <h:outputStylesheet name="css/main.css" />
+</h:head>
+
+<h:body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="nav-left">
+            <a href="home.jsf" class="web-title">Healthy Recipes</a>
+            <a href="recipes.jsf">Recipes</a>
+            <a href="about.jsf" class="active">About</a>
+            <a href="contact.jsf">Contact</a>
+        </div>
+
+        
+            <!-- If NOT logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser == null}">
+                <a href="login.jsf" class="login-btn">Login / Register</a>
+            </h:panelGroup>
+
+            <!-- If Logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser != null}" styleClass="user-menu">
+                <span class="username">
+                    Hello, <span class="username-color">#{empty loginBean.loggedUser.fullName ? loginBean.loggedUser.userName : loginBean.loggedUser.fullName} </span> ▼
+                </span>
+
+                <div class="dropdown">
+                    <h:form>
+                        <h:commandLink value="Dashboard" action="#{loginBean.goToDashboard}" styleClass="dropdown-link"/>
+                        <h:commandLink value="Logout" action="#{loginBean.logout}" styleClass="dropdown-link"/>
+                    </h:form>
+                </div>
+            </h:panelGroup>
+
+    </div>
+
+    <!-- ABOUT CONTENT -->
+    <div class="about-section">
+
+        <div class="about-text">
+            <h1>About Healthy Recipes</h1>
+            <p>
+                Welcome to <strong>Healthy Recipe Hub</strong> — your perfect place to discover
+                delicious, easy-to-make and nutritious recipes. We believe eating healthy should
+                never feel boring! 🍽✨
+            </p>
+
+            <p>
+                Our mission is to provide:
+            </p>
+
+            <ul>
+                <li>Healthy &amp; Pure Vegetarian Recipes 🥗</li>
+                <li>Category-wise dishes like Breakfast, Dinner &amp; more 🍛</li>
+                <li>Nutrition-focused and simple ingredients 🌱</li>
+                <li>Step-by-step cooking guidance 👨‍🍳</li>
+            </ul>
+
+            <p>
+                This mini project is developed by
+                <b>Khant Prakashkumar</b> using Java EE, JSF, EJB, and MySQL.
+                The purpose of this platform is to help people make smarter
+                and healthier food choices every day.
+            </p>
+        </div>
+
+        <div class="about-img-box">
+            <h:graphicImage library="img" name="about.png"
+                            alt="Healthy Food"
+                            styleClass="about-img"/>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="footer-container">
+
+            <div class="footer-col">
+                <h3>About Us</h3>
+                <p>Healthy Recipe Hub — Eat Healthy, Stay Healthy!</p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Links</h3>
+                <a href="home.jsf">Home</a><br/>
+                <a href="about.jsf">About Us</a><br/>
+                <a href="contact.jsf">Contact Us</a><br/>
+                <a href="recipes.jsf">Recipes</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Contact Us</h3>
+                <p>
+                    XT9 Developers<br/>
+                    +91 9727669930<br/>
+                    xt9developers01@gmail.com
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2025 Prakash's Healthy Recipes – Trusted Since 2025
+    </div>
+
+</h:body>
+</html>

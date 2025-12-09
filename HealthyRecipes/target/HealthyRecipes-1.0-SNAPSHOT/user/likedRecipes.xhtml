@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <h:head>
+        <title>Liked Recipes - Healthy Recipes</title>
+        <h:outputStylesheet name="css/dashboard.css"/>
+    </h:head>
+
+    <h:body>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
+                    <li><h:link outcome="/user/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+                    <li><h:link outcome="/user/profile" styleClass="nav-link">Update Profile</h:link></li>
+                    <li><h:link outcome="/user/likedRecipes" styleClass="nav-link active">Liked Recipes</h:link></li>
+               <li><h:link outcome="/user/activity" styleClass="nav-link">📌 My Activity</h:link></li>
+
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Logout?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <h2 class="section-title" style="margin-bottom: 20px;">
+                ❤️ Your Liked Recipes
+            </h2>
+
+            <!-- If no likes -->
+            <h:panelGroup rendered="#{empty userDashboardBean.likedRecipes}">
+                <div style="text-align:center; font-size:18px; color:#777;">
+                    You haven't liked any recipes yet. 😊 
+                    <br/><br/>
+                    <a href="#{request.contextPath}/recipes.jsf" class="btn-primary">Browse Recipes</a>
+                </div>
+            </h:panelGroup>
+
+            <!-- Liked Recipe List -->
+            <div class="recipes-box" id="likeList">
+                <ui:repeat value="#{userDashboardBean.likedRecipes}" var="r">
+
+                    <div class="recipe-card">
+
+                        <h:link outcome="/recipeDetails">
+                            <f:param name="id" value="#{r.recipeId}" />
+                            <h:graphicImage library="img" 
+                                            name="#{r.imageUrl}" 
+                                            class="recipe-card-img"/>
+                            <div class="recipe-title">#{r.title}</div>
+                        </h:link>
+
+                        <!-- Remove Button -->
+                        <h:form style="text-align:center;">
+                            <h:commandButton 
+                                action="#{recipeBean.removeLike(r.recipeId)}"
+                                value="💔 Remove"
+                                onclick="return confirm('Are you sure you want to remove this recipe from liked list?');"
+
+                                styleClass="remove-like-btn">
+                                <f:ajax render="@all" />
+                            </h:commandButton>
+                        </h:form>
+
+                    </div>
+
+                </ui:repeat>
+            </div>
+
+        </div>
+
+    </h:body>
+</html>

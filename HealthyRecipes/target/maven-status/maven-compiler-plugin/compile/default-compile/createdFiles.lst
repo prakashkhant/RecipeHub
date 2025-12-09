@@ -1,11 +1,16 @@
 rest\UserResource.class
 Entity\RecipeIngredientsPK.class
 ejb\AdminBeanLocal.class
+cdi\ContactBean.class
 cdi\RegisterBean.class
 Entity\Steps.class
 rest\AdminResource.class
 cdi\HomeBean.class
 cdi\ProfileBean.class
+cdi\AdminActivityBean.class
+cdi\ContactBean$1.class
+Entity\ActivityLog.class
+cdi\AdminDashboardBean.class
 cdi\LoginBean.class
 ejb\AdminBean.class
 Entity\Recipes.class

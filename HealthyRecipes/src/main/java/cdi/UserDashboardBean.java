@@ -1,10 +1,11 @@
 package cdi;
 
+import Entity.Comments;
+import Entity.Likes;
 import Entity.Recipes;
 import ejb.UserBeanLocal;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.util.List;
@@ -40,4 +41,22 @@ public class UserDashboardBean {
         userBean.deleteRecipe(recipeId);
         return "/user/userDashboard?faces-redirect=true";
     }
+     public List<Recipes> getLikedRecipes() {
+        List<Likes> likes = userBean.getUserLikes(loginBean.getLoggedUser().getUserId());
+        return likes.stream()
+                .map(l -> userBean.getRecipeByLike(l.getLikesPK().getRecipeId()))
+                .toList();
+    }
+     public List<Comments> getUserComments() {
+    if (loginBean.getLoggedUser() != null) {
+        return userBean.getUserComments(loginBean.getLoggedUser().getUserId());
+    }
+    return List.of();
+}
+
+public String deleteComment(int commentId) {
+    userBean.deleteComment(commentId);
+    return "/user/activity?faces-redirect=true";
+}
+
 }

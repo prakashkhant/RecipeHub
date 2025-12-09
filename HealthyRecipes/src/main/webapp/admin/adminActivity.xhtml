@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core">
+
+    <h:head>
+        <title>Admin Activity</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+    </h:head>
+
+    <h:body>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
+
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
+                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link active">📌 My Activity</h:link></li>
+                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
+                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
+                </ul>
+            </nav>
+
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <h2>📌 My Activity (Admin)</h2>
+
+            <!-- Admin Created Recipes -->
+            <div class="table-box">
+                <h3>📍 Recipes Created by Me</h3>
+
+                <h:form id="adminRecipesForm">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr><th>Image</th><th>Title</th><th>Category</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <ui:repeat value="#{adminActivityBean.adminRecipes}" var="r">
+                                <tr>
+                                    <td><h:graphicImage library="img" name="#{r.imageUrl}" style="width:60px;" /></td>
+                                    <td>#{r.title}</td>
+                                    <td>#{r.category}</td>
+                                    <td>
+                                        <h:commandLink value="✏ Edit"
+                                                       action="#{recipeBean.adminEditRecipe(r.recipeId)}" 
+                                                       styleClass="btn-edit btn-action"
+                                                                      />
+                                        |
+                                        <h:commandButton value="Delete"
+                                                         action="#{adminDashboardBean.deleteRecipe(r.recipeId)}"
+                                                         styleClass="btn-delete btn-action"
+                                                         onclick="return confirm('Delete?');"/>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+            <!-- Liked Recipes -->
+            <div class="table-box">
+                <h3>❤️ Liked Recipes</h3>
+
+                <h:form id="likesForm">
+                    <table class="dashboard-table">
+                        <thead><tr><th>Image</th><th>Title</th><th>Action</th></tr></thead>
+                        <tbody>
+                            <ui:repeat value="#{adminActivityBean.adminLikedRecipes}" var="r">
+                                <tr>
+                                    <td><h:graphicImage library="img" name="#{r.imageUrl}" style="width:60px;" /></td>
+                                    <td>#{r.title}</td>
+                                    <td>
+                                        <h:commandButton value="💔 Remove"
+                                                         action="#{adminActivityBean.removeLike(r.recipeId)}"
+                                                         styleClass="remove-like-btn btn-action"
+                                                         onclick="return confirm('Remove?');"/>
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+            <!-- Comments -->
+            <div class="table-box">
+                <h3>📝 My Comments</h3>
+
+                <h:form id="commentsForm">
+                    <table class="dashboard-table">
+                        <thead><tr><th>Recipe</th><th>Comment</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody>
+                            <ui:repeat value="#{adminActivityBean.adminComments}" var="c">
+                                <tr>
+                                    <td>
+                                        <h:graphicImage library="img" 
+                                                        name="#{c.recipeId.imageUrl}"
+                                                        style="width:60px; border-radius:6px;"/>
+                                        <br/>#{c.recipeId.title}        
+                                    </td>
+                                        <td>#{c.text}</td>
+                                        <td>#{c.createdAt}</td>
+                                        <td>
+                                            <h:commandButton value="Delete"
+                                                             action="#{adminActivityBean.deleteComment(c.commentId)}"
+                                                              styleClass="btn-delete btn-action"
+                                                             onclick="return confirm('Delete Comment?');" />
+                                        </td>
+                                </tr>
+                            </ui:repeat>
+                        </tbody>
+                    </table>
+                </h:form>
+            </div>
+
+        </div>
+
+    </h:body>
+</html>

@@ -2,37 +2,345 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core">
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:pt="jakarta.faces.passthrough">
 
-<h:head>
-    <title>Recipe Details</title>
-    <h:outputStylesheet name="css/main.css"/>
-</h:head>
+    <h:head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<h:body onload="#{recipeBean.loadRecipe()}">
+        <title>Recipe Details</title>
+        <h:outputStylesheet name="css/main.css"/>
+        <style>
+            .details-container {
+                max-width: 900px;
+                background: #ffffff;
+                padding: 30px;
+                margin: 40px auto;
+                box-shadow: 0 6px 28px rgba(0,0,0,0.15);
+                border-radius: 15px;
+            }
 
-    <div class="navbar">
-        <a href="home.jsf"><strong>Healthy Recipes</strong></a>
-    </div>
+            .details-img {
+                width: 100%;
+                max-width: 450px;
+                height: auto;
+                border-radius: 12px;
+                display: block;
+                margin: 10px auto 25px;
+            }
 
-    <div class="details-container">
-        <h:graphicImage library="img" name="#{recipeBean.selectedRecipe.imageUrl}"
-                        class="details-img"/>
+            .details-title {
+                text-align: center;
+                color: #2e6b4e;
+                font-size: 32px;
+                font-weight: bold;
+            }
 
-        <h1 class="details-title">#{recipeBean.selectedRecipe.title}</h1>
+            p {
+                color: #444;
+                line-height: 1.6;
+                font-size: 18px;
+            }
 
-        <p><b>Category:</b> #{recipeBean.selectedRecipe.category}</p>
-        <p><b>Difficulty:</b> #{recipeBean.selectedRecipe.difficulty}</p>
-        <p><b>Created:</b> #{recipeBean.selectedRecipe.createdAt}</p>
+            .video-box {
+                text-align: center;
+                margin-top: 30px;
+            }
 
-        <h2>Description</h2>
-        <p>#{recipeBean.selectedRecipe.description}</p>
+            .video-box iframe {
+                width: 100%;
+                max-width: 600px;
+                height: 340px;
+                border-radius: 10px;
+                border: none;
+            }
 
-        <h2>Steps</h2>
-        <pre>#{recipeBean.selectedRecipe.steps}</pre>
+            .btn-back {
+                display: inline-block;
+                margin-top: 25px;
+                padding: 10px 20px;
+                background: #2e6b4e;
+                color: #fff;
+                border-radius: 8px;
+                text-decoration: none;
+                font-size: 18px;
+            }
 
-        <h:link outcome="home.jsf" styleClass="btn-back">← Back</h:link>
-    </div>
+            .btn-back:hover {
+                background: #1d4834;
+            }
 
-</h:body>
+            .author-box {
+                margin-top: 10px;
+                font-style: italic;
+                color: #666;
+            }
+            .btn-download {
+                background-color: #2e6b4e;
+                color: #fff;
+                padding: 10px 18px;
+                border-radius: 6px;
+                border: none;
+                margin: 10px 0;
+                cursor: pointer;
+                font-size: 15px;
+                font-weight: bold;
+            }
+
+            .btn-download:hover {
+                background-color: #245f45;
+            }
+            .like-btn-detail {
+                background: none;
+                border: none;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 5px 5px;
+            }
+
+            .like-btn-detail:hover {
+                transform: scale(1.1);
+            }
+
+            .like-count-detail {
+                margin-left: 2px;
+                font-size: 20px;
+                color: #000;
+                font-weight: bold;
+            }
+            .likes-section {
+                /*    display: flex;*/
+                /*justify-content: space-between;*/
+                padding: 5px 5px;
+                align-items: center;
+                /*border: 1px solid #ccc;*/
+                width: fit-content;
+            }
+
+        </style>
+    </h:head>
+
+    <h:body onload="#{recipeBean.loadRecipe()}">
+
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <div class="nav-left">
+                <h:link outcome="home" styleClass="web-title">Healthy Recipes</h:link>
+                <a href="recipes.jsf">Recipes</a>
+                <a href="about.jsf">About</a>
+                <a href="contact.jsf">Contact</a>
+            </div>
+
+            <!-- If NOT logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser == null}">
+                <a href="login.jsf" class="login-btn">Login / Register</a>
+            </h:panelGroup>
+
+            <!-- If Logged in -->
+            <h:panelGroup rendered="#{loginBean.loggedUser != null}" styleClass="user-menu">
+                <span class="username">
+                    Hello, <span class="username-color">#{empty loginBean.loggedUser.fullName ? loginBean.loggedUser.userName : loginBean.loggedUser.fullName} </span> ▼
+                </span>
+
+                <div class="dropdown">
+                    <h:form>
+                        <h:commandLink value="Dashboard" action="#{loginBean.goToDashboard}" styleClass="dropdown-link"/>
+                        <h:commandLink value="Logout" action="#{loginBean.logout}" styleClass="dropdown-link"/>
+                    </h:form>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <div class="details-container">
+
+            <h1 class="details-title">#{recipeBean.selectedRecipe.title}</h1>
+
+            <h:graphicImage library="img"
+                            name="#{recipeBean.selectedRecipe.imageUrl}"
+                            styleClass="details-img"/>
+
+            <div class="author-box">
+                Uploaded by: <b>#{recipeBean.selectedRecipe.userId.fullName}</b>
+            </div>
+
+            <p><b>Category:</b> #{recipeBean.selectedRecipe.category}</p>
+            <p><b>Difficulty:</b> #{recipeBean.selectedRecipe.difficulty}</p>
+            <p><b>Created:</b> #{recipeBean.selectedRecipe.createdAt}</p>
+
+            <h2>Description</h2>
+            <p>#{recipeBean.selectedRecipe.description}</p>
+
+            <h2>Steps</h2>
+            <pre style="white-space: pre-line; font-size:17px; color:#333;">
+                #{recipeBean.selectedRecipe.steps}
+            </pre>
+
+            <!-- Video Section -->
+            <ui:fragment rendered="#{not empty recipeBean.selectedRecipe.videoUrl}">
+                <h2 style="text-align:center;">Watch Video</h2>
+                <div class="video-box">
+                    <iframe src="#{recipeBean.selectedRecipe.videoUrl}"
+                            allowfullscreen="true">
+                    </iframe>
+                </div>
+            </ui:fragment>
+
+            <!-- LIKE SECTION -->
+            <div class="likes-section">
+                <h:panelGroup rendered="#{loginBean.loggedUser != null}">
+                    <h:form style="text-align:center; margin-top:15px;">
+
+                        <h:commandButton 
+                            action="#{recipeBean.toggleLike(recipeBean.selectedRecipe.recipeId)}"
+                            value="#{recipeBean.isLiked(recipeBean.selectedRecipe.recipeId) ? '❤️' : '🤍'}"
+                            styleClass="like-btn-detail">
+                            <f:ajax render="@form" />
+                            <span class="like-count-detail">
+                                #{recipeBean.getLikeCount(recipeBean.selectedRecipe.recipeId)}
+                            </span>
+                        </h:commandButton>
+
+
+
+                    </h:form>
+                </h:panelGroup>
+            </div>
+            <!-- BACK + DOWNLOAD BUTTONS -->
+            <h:link outcome="home" styleClass="btn-back">← Home</h:link>
+            <h:panelGroup rendered="#{loginBean.loggedUser != null}">
+                <button type="button" class="btn-download" onclick="downloadRecipePDF()">
+                    📥 Download (PDF)
+                </button>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{loginBean.loggedUser == null}">
+                <div style="margin-top:10px; text-align:center; color:#d9534f; font-weight:bold;">
+                    *Login to download this recipe*
+                </div>
+                <a href="login.jsf" class="btn-back" style="background:#d9534f;">Login</a>
+            </h:panelGroup>
+
+
+
+        </div>
+        <div class="comments-section">
+            <h2 class="comments-title">💬 Comments</h2>
+
+            <!-- Add Comment Box -->
+            <h:panelGroup rendered="#{loginBean.loggedUser != null}">
+                <h:form>
+                    <h:inputTextarea value="#{recipeBean.commentText}"
+                                     styleClass="comment-input"
+                                     required="true"
+                                     pt:placeholder="Write your comment... 💬"/>
+                    <br/>
+                    <h:commandButton 
+                        value="Post Comment" 
+                        action="#{recipeBean.addComment}"
+                        styleClass="comment-btn">
+                        <f:ajax execute="@form" render="@all"/>
+                    </h:commandButton>
+                </h:form>
+            </h:panelGroup>
+
+            <!-- Comments List -->
+            <ui:repeat value="#{recipeBean.comments}" var="c">
+                <div class="comment-box">
+                    <span class="comment-header">
+                        #{c.userId.fullName}
+                    </span>
+                    <span class="comment-date">
+                        (#{c.createdAt})
+                    </span>
+                    <div class="comment-text">
+                        #{c.text}
+                    </div>
+                </div>
+            </ui:repeat>
+        </div>
+        <div class="footer">
+            <div class="footer-container">
+
+                <!-- ABOUT US -->
+                <div class="footer-col">
+                    <h3>About Us</h3>
+                    <p>This mini project is made by<br/> <b>Prakash S Khant</b>.</p>
+                </div>
+
+                <!-- QUICK LINKS -->
+                <div class="footer-col">
+                    <h3>Links</h3>
+                    <a href="home.jsf">Home</a><br/>
+                    <a href="about.jsf">About Us</a><br/>
+                    <a href="contact.jsf">Contact Us</a><br/>
+                    <a href="recipes.jsf">Recipes</a>
+                </div>
+
+                <!-- CONTACT INFO -->
+                <div class="footer-col">
+                    <h3>Contact Us</h3>
+                    <p>
+                        XT9 Developers<br/>
+                        +91 9727669930<br/>
+                        xt9developers01@gmail.com
+                    </p>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2025 Prakash's Healthy Recipes – Authentic &amp; Pure Vegetarian Recipes Trusted Since 2025
+        </div>
+        <script>
+            async function downloadRecipePDF() {
+                const {jsPDF} = window.jspdf;
+                const element = document.querySelector(".details-container");
+
+                // Hide buttons before screenshot
+                const buttons = document.querySelectorAll(".btn-download, .btn-back");
+                buttons.forEach(btn => btn.style.display = "none");
+
+                // Capture screenshot
+                const canvas = await html2canvas(element, {scale: 2});
+                const imgData = canvas.toDataURL("image/png");
+
+                // Restore buttons again
+                buttons.forEach(btn => btn.style.display = "inline-block");
+
+                // Create PDF
+                const pdf = new jsPDF({
+                    orientation: "p",
+                    unit: "mm",
+                    format: "a4"
+                });
+
+                const imgWidth = 190;
+                const pageHeight = 295;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+
+                let heightLeft = imgHeight;
+                let y = 10;
+
+                pdf.addImage(imgData, 'PNG', 10, y, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft > 0) {
+                    pdf.addPage();
+                    y = 0;
+                    pdf.addImage(imgData, 'PNG', 10, y, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                let title = document.querySelector(".details-title").innerText || "Recipe";
+                pdf.save(title + ".pdf");
+            }
+        </script>
+
+
+    </h:body>
 </html>

@@ -33,53 +33,73 @@ public class ProfileBean implements Serializable {
         }
         return currentUser;
     }
-private String newPassword;
-private String confirmPassword;
+    private String newPassword;
+    private String confirmPassword;
 
-public String updateProfile() {
-    try {
-        Users user = getCurrentUser();
+    public String updateProfile() {
+        try {
+            Users user = getCurrentUser();
 
-        // If password fields filled then validate
-        if ((newPassword != null && !newPassword.isEmpty()) ||
-            (confirmPassword != null && !confirmPassword.isEmpty())) {
+            // if password fields filled then validate
+            if ((newPassword != null && !newPassword.isEmpty())
+                    || (confirmPassword != null && !confirmPassword.isEmpty())) {
 
-            if (!newPassword.equals(confirmPassword)) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Passwords do not match!", null));
-                return null;
+                if (!newPassword.equals(confirmPassword)) {
+                    FacesContext.getCurrentInstance().addMessage(null,
+                            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                    "Passwords do not match!", null));
+                    return null;
+                }
+
+                user.setPassword(newPassword);
             }
 
-            user.setPassword(newPassword); // Update password
+            userBean.updateUser(user);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Profile Updated Successfully! 🎉", null));
+
+            newPassword = "";
+            confirmPassword = "";
+
+     
+
+// Keep message through redirect
+            FacesContext.getCurrentInstance()
+                    .getExternalContext()
+                    .getFlash()
+                    .setKeepMessages(true);
+
+// Redirect based on role
+            if (loginBean.getLoggedUser().getRole().equalsIgnoreCase("admin")) {
+                return "/admin/profile?faces-redirect=true";
+            }
+            return "/user/profile?faces-redirect=true";
+
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Error updating profile! ❌", null));
+            return null;
         }
-
-        userBean.updateUser(user);
-
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_INFO,
-            "Profile Updated Successfully! 🎉", null));
-
-        newPassword = "";
-        confirmPassword = "";
-        return null;
-
-    } catch (Exception e) {
-        FacesContext.getCurrentInstance().addMessage(null,
-            new FacesMessage(FacesMessage.SEVERITY_ERROR,
-            "Error updating profile! ❌", null));
-        return null;
     }
-}
-
 
 // getters & setters
-public String getNewPassword() { return newPassword; }
-public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
+    public String getNewPassword() {
+        return newPassword;
+    }
 
-public String getConfirmPassword() { return confirmPassword; }
-public void setConfirmPassword(String confirmPassword) { this.confirmPassword = confirmPassword; }
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
 
-    
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
+    }
+
 }
