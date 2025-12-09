@@ -11,6 +11,9 @@
 </h:head>
 
 <h:body>
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+</f:metadata>
 
 <div class="sidebar">
     <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>

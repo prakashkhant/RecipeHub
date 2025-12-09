@@ -7,14 +7,17 @@
       xmlns:pt="jakarta.faces.passthrough">
 
 <h:head>
-    <title>Add Recipe - Healthy Recipe</title>
+    <title>Add Recipe - Healthy Recipes</title>
     <h:outputStylesheet name="css/dashboard.css" />
 </h:head>
 
 <h:body>
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+</f:metadata>
 
 <div class="sidebar">
-    <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
+    <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
 
     <nav class="menu">
         <ul>

@@ -11,10 +11,13 @@
     </h:head>
 
     <h:body>
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+</f:metadata>
 
         <!-- Sidebar Include -->
         <div class="sidebar">
-            <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
+            <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
 
             <nav class="menu">
                 <ul>

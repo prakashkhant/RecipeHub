@@ -13,11 +13,13 @@ Entity\ActivityLog.class
 cdi\AdminDashboardBean.class
 cdi\LoginBean.class
 ejb\AdminBean.class
+util\InputSanitizer.class
 Entity\Recipes.class
 cdi\RecipeBean.class
 Entity\RecipeIngredients.class
 com\mycompany\healthyrecipes\resources\JakartaEE10Resource.class
 Entity\LikesPK.class
+util\PasswordUtil.class
 ejb\UserBeanLocal.class
 Entity\Ratings.class
 cdi\UserDashboardBean.class

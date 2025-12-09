@@ -6,11 +6,15 @@
       xmlns:ui="jakarta.faces.facelets">
 
     <h:head>
-        <title>User Dashboard - Healthy Recipe</title>
+        <title>User Dashboard - Healthy Recipes</title>
         <h:outputStylesheet name="css/dashboard.css" />
     </h:head>
 
     <h:body>
+        <f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+</f:metadata>
+
         <!-- Sidebar -->
 
         <!-- Sidebar + Header Include Later (Same UI as Dashboard) -->

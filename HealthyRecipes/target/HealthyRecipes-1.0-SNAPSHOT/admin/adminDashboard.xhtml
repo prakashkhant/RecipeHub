@@ -11,6 +11,10 @@
     </h:head>
 
     <h:body>
+        <f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+</f:metadata>
+
         <div class="sidebar">
             <h:form>
                 <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>

@@ -15,6 +15,7 @@ import java.io.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import util.InputSanitizer;
 
 @Named(value = "recipeBean")
 @SessionScoped
@@ -58,9 +59,10 @@ public class RecipeBean implements Serializable {
             }
 
             Recipes r = new Recipes();
-            r.setTitle(title);
-            r.setDescription(description);
-            r.setSteps(steps);
+            r.setTitle(InputSanitizer.clean(title));
+            r.setDescription(InputSanitizer.clean(description));
+            r.setSteps(InputSanitizer.clean(steps));
+
             r.setCategory(category);
             r.setDifficulty(difficulty);
             r.setVideoUrl(videoUrl);
@@ -68,13 +70,34 @@ public class RecipeBean implements Serializable {
             r.setUserId(loginBean.getLoggedUser());
 
             // IMAGE UPLOAD
+            // IMAGE UPLOAD VALIDATION
             if (imageFile != null) {
-                String fileName = System.currentTimeMillis() + "_" + imageFile.getSubmittedFileName();
+                String type = imageFile.getContentType();
+                long size = imageFile.getSize();
+
+                // Allowed file types
+                if (!(type.equals("image/png")
+                        || type.equals("image/jpg")
+                        || type.equals("image/jpeg")
+                        || type.equals("image/gif"))) {
+
+                    addMessage("Only PNG, JPG, JPEG or GIF images allowed!", FacesMessage.SEVERITY_ERROR);
+                    return null;
+                }
+
+                // Size limit: 5 MB
+                if (size > (5 * 1024 * 1024)) {
+                    addMessage("Image size must be less than 5MB!", FacesMessage.SEVERITY_ERROR);
+                    return null;
+                }
+
+                // Continue saving after validation passes 👌
+                String fileName = imageFile.getSubmittedFileName();
                 r.setImageUrl(fileName);
 
                 String uploadPath = FacesContext.getCurrentInstance()
                         .getExternalContext()
-                        .getRealPath("/resources/images/");
+                        .getRealPath("/resources/img/");
 
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
@@ -134,22 +157,42 @@ public class RecipeBean implements Serializable {
         try {
             Recipes r = userBean.getRecipeById(editRecipeId);
 
-            r.setTitle(title);
-            r.setDescription(description);
-            r.setSteps(steps);
+            r.setTitle(InputSanitizer.clean(title));
+            r.setDescription(InputSanitizer.clean(description));
+            r.setSteps(InputSanitizer.clean(steps));
+
             r.setCategory(category);
             r.setDifficulty(difficulty);
             r.setVideoUrl(videoUrl);
 
             if (imageFile != null && imageFile.getSubmittedFileName() != null
                     && !imageFile.getSubmittedFileName().isEmpty()) {
+                String type = imageFile.getContentType();
+                long size = imageFile.getSize();
 
-                String fileName = System.currentTimeMillis() + "_" + imageFile.getSubmittedFileName();
+                // Allowed file types
+                if (!(type.equals("image/png")
+                        || type.equals("image/jpg")
+                        || type.equals("image/jpeg")
+                        || type.equals("image/gif"))) {
+
+                    addMessage("Only PNG, JPG, JPEG or GIF images allowed!", FacesMessage.SEVERITY_ERROR);
+                    return null;
+                }
+
+                // Size limit: 5 MB
+                if (size > (5 * 1024 * 1024)) {
+                    addMessage("Image size must be less than 5MB!", FacesMessage.SEVERITY_ERROR);
+                    return null;
+                }
+
+                // Continue saving after validation passes 👌
+                String fileName = imageFile.getSubmittedFileName();
                 r.setImageUrl(fileName);
 
                 String uploadPath = FacesContext.getCurrentInstance()
                         .getExternalContext()
-                        .getRealPath("/resources/images/");
+                        .getRealPath("/resources/img/");
 
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
@@ -337,9 +380,11 @@ public class RecipeBean implements Serializable {
             return;
         }
 
+        String safeText = InputSanitizer.clean(commentText);
         userBean.addComment(selectedRecipe.getRecipeId(),
                 loginBean.getLoggedUser().getUserId(),
-                commentText);
+                safeText);
+
         adminBean.logActivity(loginBean.getLoggedUser(),
                 "Commented on recipe: " + selectedRecipe.getTitle());
 

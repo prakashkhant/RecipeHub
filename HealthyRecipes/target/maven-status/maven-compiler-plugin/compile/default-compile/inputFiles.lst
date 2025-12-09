@@ -7,6 +7,7 @@ D:\Project\HealthyRecipes\src\main\java\ejb\UserBeanLocal.java
 D:\Project\HealthyRecipes\src\main\java\ejb\AdminBean.java
 D:\Project\HealthyRecipes\src\main\java\cdi\ContactBean.java
 D:\Project\HealthyRecipes\src\main\java\ejb\UserBean.java
+D:\Project\HealthyRecipes\src\main\java\util\InputSanitizer.java
 D:\Project\HealthyRecipes\src\main\java\Entity\LikesPK.java
 D:\Project\HealthyRecipes\src\main\java\Entity\Ratings.java
 D:\Project\HealthyRecipes\src\main\java\cdi\ProfileBean.java
@@ -26,3 +27,4 @@ D:\Project\HealthyRecipes\src\main\java\cdi\AdminDashboardBean.java
 D:\Project\HealthyRecipes\src\main\java\com\mycompany\healthyrecipes\resources\JakartaEE10Resource.java
 D:\Project\HealthyRecipes\src\main\java\Entity\Recipes.java
 D:\Project\HealthyRecipes\src\main\java\cdi\RecipeBean.java
+D:\Project\HealthyRecipes\src\main\java\util\PasswordUtil.java

@@ -11,6 +11,9 @@
     </h:head>
 
     <h:body>
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+</f:metadata>
 
         <!-- SIDEBAR -->
         <div class="sidebar">

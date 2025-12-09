@@ -17,6 +17,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -65,6 +66,14 @@ public class Users implements Serializable {
     @Size(max = 8)
     @Column(name = "role")
     private String role;
+    
+    @Column(name = "failed_attempts")
+private Integer failedAttempts = 0;
+
+@Column(name = "lock_time")
+@Temporal(TemporalType.TIMESTAMP)
+private Date lockTime;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private Collection<ActivityLog> activityLogCollection;
 
@@ -90,7 +99,8 @@ public class Users implements Serializable {
 
     public Users() {
     }
-
+@Transient
+private String message;
     public Users(Integer userId) {
         this.userId = userId;
     }
@@ -231,5 +241,18 @@ public class Users implements Serializable {
     public void setActivityLogCollection(Collection<ActivityLog> activityLogCollection) {
         this.activityLogCollection = activityLogCollection;
     }
-    
+   public Integer getFailedAttempts() { return failedAttempts; }
+public void setFailedAttempts(Integer failedAttempts) { this.failedAttempts = failedAttempts; }
+
+public Date getLockTime() { return lockTime; }
+public void setLockTime(Date lockTime) { this.lockTime = lockTime; }
+
+
+public String getMessage() {
+    return message;
+}
+public void setMessage(String message) {
+    this.message = message;
+}
+ 
 }

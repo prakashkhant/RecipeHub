@@ -29,31 +29,29 @@ private AdminBeanLocal adminBean;
 
 
 public String login() {
-    loggedUser = userBean.login(username, password);
-    System.out.println("Trying login: " + loggedUser);
+    Users result = userBean.login(username, password);
 
-    if (loggedUser != null) {
-        adminBean.logActivity(loggedUser, "User logged in");
-
-        return "home.jsf?faces-redirect=true"; // Always go back to home page
+    if (result == null) {
+        showMsg("Username not found!", FacesMessage.SEVERITY_ERROR);
+        return null;
     }
 
-    FacesContext.getCurrentInstance().addMessage(
-        null,
-        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-        "Username or Password incorrect!", null)
-    );
-
-    return null; // stay on same page, show error
-}
-
-public void redirectIfNotLoggedIn() throws IOException {
-    if (loggedUser == null) {
-        FacesContext.getCurrentInstance()
-            .getExternalContext()
-            .redirect("login.jsf");
+    if (result.getMessage() != null) {
+        showMsg(result.getMessage(), FacesMessage.SEVERITY_ERROR);
+        return null;
     }
+
+    loggedUser = result;
+    adminBean.logActivity(loggedUser, "User logged in");
+    return "home.jsf?faces-redirect=true";
 }
+
+private void showMsg(String msg, FacesMessage.Severity type) {
+    FacesContext.getCurrentInstance().addMessage(null,
+        new FacesMessage(type, msg, null));
+}
+
+
 
 public String logout() {
         adminBean.logActivity(loggedUser, "User logged out");
@@ -108,5 +106,31 @@ public String logout() {
     return "user/activity?faces-redirect=true";
 }
 
+//secutity for admin pages
+   public void redirectIfNotAdmin() throws IOException {
+    if (loggedUser == null) {
+        // Not logged in → send to login page
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/HealthyRecipes/login.jsf");
+        return;
+    }
 
+    if (!"admin".equalsIgnoreCase(loggedUser.getRole())) {
+        // Logged in but not admin → send to home
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/HealthyRecipes/home.jsf");
+    }
+}
+    public void redirectIfNotLoggedIn() throws IOException {
+    if (loggedUser == null) {
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/HealthyRecipes/login.jsf");
+    }
+     if ("admin".equalsIgnoreCase(loggedUser.getRole())) {
+        // Logged in but  admin → send to home
+        FacesContext.getCurrentInstance().getExternalContext()
+                .redirect("/HealthyRecipes/home.jsf");
+    }
+}
+ 
 }

@@ -15,6 +15,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import java.io.Serializable;
+import util.PasswordUtil;
 
 @Named(value = "registerBean")
 @RequestScoped
@@ -54,7 +55,7 @@ public String register() {
     u.setFullName(fullname);
     u.setUserName(username);
     u.setEmail(email);
-    u.setPassword(password);
+u.setPassword(PasswordUtil.hashPassword(password));
     u.setRole(role);
     u.setCreatedAt(new java.util.Date());
 

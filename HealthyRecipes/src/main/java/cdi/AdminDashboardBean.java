@@ -13,6 +13,8 @@ import jakarta.inject.Named;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.inject.Inject;
+import java.util.Date;
+import java.util.Calendar;
 
 @Named
 @SessionScoped
@@ -29,6 +31,16 @@ public class AdminDashboardBean implements Serializable {
     private int userPage = 0;
     private int recipePage = 0;
     private final int pageSize = 10;
+        // existing fields...
+  
+
+    // 🔽 NEW FIELDS FOR ACTIVITY LOGS
+    private String activityFilter = "ALL"; // ALL, TODAY, WEEK, MONTH
+    private Integer filterUserId; // For specific user
+    private String searchTerm;    // For keyword search
+    private int logPageIndex = 0; // 0-based index
+    private final int logPageSize = 20; // you chose 20 per page
+
 
     public List<Users> getAllUsersPaginated() {
         List<Users> all = userBean.getAllUsers();
@@ -144,15 +156,38 @@ public String deleteRecipe(Integer recipeId) {
         return "/admin/manageUsers?faces-redirect=true";
     }
 
-    public List<ActivityLog> getAllActivities() {
-        System.out.println("Activities count: " + adminBean.getAllActivities().size());
-
-        return adminBean.getAllActivities();
-        
+      public List<ActivityLog> getAllActivities() {
+        return getFilteredActivities(); // if you want full filtered list somewhere
     }
-    private String activityFilter = "ALL"; // ALL, TODAY, WEEK, MONTH
-    private Integer filterUserId; // For specific user filter
 
+    public List<ActivityLog> getAllActivitiesPaginated() {
+        List<ActivityLog> filtered = getFilteredActivities();
+
+        int start = logPageIndex * logPageSize;
+        if (start >= filtered.size()) {
+            logPageIndex = 0;
+            start = 0;
+        }
+        int end = Math.min(start + logPageSize, filtered.size());
+
+        System.out.println("Activities filtered count: " + filtered.size());
+        return filtered.subList(start, end);
+    }
+
+    public void nextLogPage() {
+        if ((logPageIndex + 1) * logPageSize < getFilteredActivities().size()) {
+            logPageIndex++;
+        }
+    }
+
+    public void previousLogPage() {
+        if (logPageIndex > 0) {
+            logPageIndex--;
+        }
+    }
+
+   
+  
     public String getActivityFilter() {
         return activityFilter;
     }
@@ -167,6 +202,90 @@ public String deleteRecipe(Integer recipeId) {
 
     public void setFilterUserId(Integer filterUserId) {
         this.filterUserId = filterUserId;
+    }
+
+
+    public String getSearchTerm() {
+        return searchTerm;
+    }
+
+    public void setSearchTerm(String searchTerm) {
+        this.searchTerm = searchTerm;
+    }
+
+    // page number for UI (1-based)
+    public int getLogPageNumber() {
+        return logPageIndex + 1;
+    }
+    private List<ActivityLog> getFilteredActivities() {
+        List<ActivityLog> logs = adminBean.getAllActivities(); // already DESC
+
+        // Filter by time
+        Date now = new Date();
+        logs.removeIf(a -> {
+            Date ts = a.getTimestamp();
+            switch (activityFilter) {
+                case "TODAY":
+                    return !isToday(ts, now);
+                case "WEEK":
+                    return !isLast7Days(ts, now);
+                case "MONTH":
+                    return !isThisMonth(ts, now);
+                default:
+                    return false; // ALL
+            }
+        });
+
+        // Filter by User
+        if (filterUserId != null && filterUserId != 0) {
+            logs.removeIf(a -> !a.getUserId().getUserId().equals(filterUserId));
+        }
+
+        // Search by keyword (activity text or user name)
+        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+            String keyword = searchTerm.toLowerCase();
+            logs.removeIf(a ->
+                    (a.getActivity() == null || !a.getActivity().toLowerCase().contains(keyword)) &&
+                    (a.getUserId() == null || a.getUserId().getFullName() == null ||
+                     !a.getUserId().getFullName().toLowerCase().contains(keyword))
+            );
+        }
+
+        return logs;
+    }
+
+    public int getLogTotalPages() {
+        int total = getFilteredActivities().size();
+        return total == 0 ? 1 : (int) Math.ceil(total / (double) logPageSize);
+    }
+    public void resetLogPage() {
+        logPageIndex = 0;
+    }
+    private boolean isToday(Date date, Date now) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(now);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
+                && c1.get(Calendar.DAY_OF_YEAR) == c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private boolean isLast7Days(Date date, Date now) {
+        long diff = now.getTime() - date.getTime();
+        long days = diff / (1000L * 60 * 60 * 24);
+        return days >= 0 && days < 7;
+    }
+
+    private boolean isThisMonth(Date date, Date now) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(now);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date);
+        return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
+                && c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH);
+    }
+    public List<Users> getAllUsers() {
+        return userBean.getAllUsers();
     }
 
 }

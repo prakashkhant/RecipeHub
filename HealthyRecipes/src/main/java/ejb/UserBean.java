@@ -12,8 +12,10 @@ import Entity.Recipes;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.util.Date;
 import java.util.List;
+import util.PasswordUtil;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Stateless
 public class UserBean implements UserBeanLocal {
@@ -21,23 +23,61 @@ public class UserBean implements UserBeanLocal {
     @PersistenceContext(unitName = "healthyPU")
     EntityManager em;
 
-    @Override
-    public Users login(String username, String password) {
-        System.out.println("Query username: " + username);
+@Override
+public Users login(String username, String password) {
+    try {
+        Users user = em.createQuery(
+                "SELECT u FROM Users u WHERE u.userName = :username",
+                Users.class)
+                .setParameter("username", username)
+                .getSingleResult();
 
-        try {
-            return em.createQuery(
-                    "SELECT u FROM Users u WHERE u.userName = :username AND u.password = :password",
-                    Users.class)
-                    .setParameter("username", username)
-                    .setParameter("password", password)
-                    .getSingleResult();
+        // 🔐 Check lock status
+        if (user.getLockTime() != null) {
+            long diff = new Date().getTime() - user.getLockTime().getTime();
+            long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
 
-        } catch (Exception e) {
-            return null;
+            if (minutes < 5) {
+                // account still locked
+                user.setMessage("Your account is locked for 5 minutes!");
+                return user;
+            } else {
+                // Reset lock
+                user.setFailedAttempts(0);
+                user.setLockTime(null);
+                em.merge(user);
+            }
         }
 
+        // Password hash verify
+        String hashed = PasswordUtil.hashPassword(password);
+        if (!user.getPassword().equals(hashed)) {
+            int attempts = user.getFailedAttempts() + 1;
+            user.setFailedAttempts(attempts);
+
+            if (attempts >= 3) {
+                user.setLockTime(new Date());
+                em.merge(user);
+                user.setMessage("Too many failed attempts! Account locked for 5 min!");
+                return user;
+            }
+
+            em.merge(user);
+            user.setMessage("Wrong password! Attempts: " + attempts + "/3");
+            return user;
+        }
+
+        // Success login
+        user.setFailedAttempts(0);
+        user.setLockTime(null);
+        em.merge(user);
+        user.setMessage(null);
+        return user;
+
+    } catch (Exception e) {
+        return null;
     }
+}
 
     @Override
     public String deleteRecipe(int recipeId) {

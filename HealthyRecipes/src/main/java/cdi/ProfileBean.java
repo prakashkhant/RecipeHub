@@ -13,6 +13,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
+import util.PasswordUtil;
 
 @Named("profileBean")
 @SessionScoped
@@ -51,7 +52,7 @@ public class ProfileBean implements Serializable {
                     return null;
                 }
 
-                user.setPassword(newPassword);
+user.setPassword(PasswordUtil.hashPassword(newPassword));
             }
 
             userBean.updateUser(user);
