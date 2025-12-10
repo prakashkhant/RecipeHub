@@ -5,6 +5,7 @@
 package ejb;
 
 import Entity.ActivityLog;
+import Entity.Categories;
 import Entity.Users;
 import Entity.Recipes;
 import jakarta.ejb.Stateless;
@@ -71,6 +72,11 @@ public List<ActivityLog> getAllActivities() {
         ActivityLog.class
     ).getResultList();
 }
+@Override
+public List<Categories> getAllCategories() {
+    return em.createQuery("SELECT c FROM Categories c ORDER BY c.categoryName", Categories.class)
+             .getResultList();
+}
 
 
 // Helpers
@@ -87,4 +93,5 @@ public List<ActivityLog> getAllActivities() {
         return date.after(monthAgo);
     }
 
+ 
 }

@@ -40,7 +40,7 @@ import java.util.Date;
     @NamedQuery(name = "Recipes.findAllDesc", query = "SELECT r FROM Recipes r ORDER BY r.createdAt DESC"),
     @NamedQuery(name = "Recipes.findByRecipeId", query = "SELECT r FROM Recipes r WHERE r.recipeId = :recipeId"),
     @NamedQuery(name = "Recipes.findByTitle", query = "SELECT r FROM Recipes r WHERE r.title = :title"),
-    @NamedQuery(name = "Recipes.findByCategory", query = "SELECT r FROM Recipes r WHERE r.category = :category"),
+    @NamedQuery(name = "Recipes.findByCategory", query = "SELECT r FROM Recipes r WHERE r.categoryId = :categoryId"),
     @NamedQuery(name = "Recipes.findByDifficulty", query = "SELECT r FROM Recipes r WHERE r.difficulty = :difficulty"),
     @NamedQuery(name = "Recipes.findByImageUrl", query = "SELECT r FROM Recipes r WHERE r.imageUrl = :imageUrl"),
     @NamedQuery(name = "Recipes.findByVideoUrl", query = "SELECT r FROM Recipes r WHERE r.videoUrl = :videoUrl"),
@@ -62,9 +62,10 @@ public class Recipes implements Serializable {
     @Size(max = 65535)
     @Column(name = "description")
     private String description;
-    @Size(max = 50)
-    @Column(name = "category")
-    private String category;
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @ManyToOne
+    private Categories categoryId;
+
     @Lob
     @Column(name = "steps")
     private String steps;
@@ -134,12 +135,12 @@ public class Recipes implements Serializable {
         this.description = description;
     }
 
-    public String getCategory() {
-        return category;
+    public Categories getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Categories categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getSteps() {

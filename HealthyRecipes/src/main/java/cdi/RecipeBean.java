@@ -1,9 +1,11 @@
 package cdi;
 
+import Entity.Categories;
 import Entity.Comments;
 import Entity.Recipes;
 import ejb.AdminBeanLocal;
 import ejb.UserBeanLocal;
+import jakarta.annotation.PostConstruct;
 import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -24,23 +26,30 @@ public class RecipeBean implements Serializable {
     private String title;
     private String description;
     private String steps;
-    private String category;
+    private Categories categoryId;
     private String difficulty;
     private Part imageFile;
     private String videoUrl;
     private Integer editRecipeId;
     private boolean editing = false;
+    @EJB
+    private AdminBeanLocal adminBean; // already exists
+
+    private List<Categories> categoryList;
 
     @EJB
     private UserBeanLocal userBean;
 
     @Inject
     private LoginBean loginBean;
-    @EJB
-    private AdminBeanLocal adminBean;
 
     public RecipeBean() {
     }
+@PostConstruct
+public void init() {
+    categoryList = userBean.getAllCategories(); 
+}
+
 
     public String saveRecipe() {
         try {
@@ -51,7 +60,7 @@ public class RecipeBean implements Serializable {
 
             // Validation
             if (title == null || title.trim().isEmpty()
-                    || category == null || category.isEmpty()
+                    || categoryId == null
                     || difficulty == null || difficulty.isEmpty()) {
 
                 addMessage("Please fill all required fields!", FacesMessage.SEVERITY_ERROR);
@@ -63,7 +72,7 @@ public class RecipeBean implements Serializable {
             r.setDescription(InputSanitizer.clean(description));
             r.setSteps(InputSanitizer.clean(steps));
 
-            r.setCategory(category);
+            r.setCategoryId(categoryId);
             r.setDifficulty(difficulty);
             r.setVideoUrl(videoUrl);
             r.setCreatedAt(new Date());
@@ -144,7 +153,7 @@ public class RecipeBean implements Serializable {
             this.title = r.getTitle();
             this.description = r.getDescription();
             this.steps = r.getSteps();
-            this.category = r.getCategory();
+            this.categoryId = r.getCategoryId();
             this.difficulty = r.getDifficulty();
             this.videoUrl = r.getVideoUrl();
             this.editing = true;
@@ -161,7 +170,7 @@ public class RecipeBean implements Serializable {
             r.setDescription(InputSanitizer.clean(description));
             r.setSteps(InputSanitizer.clean(steps));
 
-            r.setCategory(category);
+            r.setCategoryId(categoryId);
             r.setDifficulty(difficulty);
             r.setVideoUrl(videoUrl);
 
@@ -238,7 +247,7 @@ public class RecipeBean implements Serializable {
         title = null;
         description = null;
         steps = null;
-        category = null;
+        categoryId = null;
         difficulty = null;
         imageFile = null;
         videoUrl = null;
@@ -287,14 +296,18 @@ public class RecipeBean implements Serializable {
         this.steps = steps;
     }
 
-    public String getCategory() {
-        return category;
+    public Categories getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Categories categoryId) {
+        this.categoryId = categoryId;
     }
 
+  
+public List<Categories> getCategoryList() {
+    return categoryList;
+}
     public String getDifficulty() {
         return difficulty;
     }
@@ -328,7 +341,7 @@ public class RecipeBean implements Serializable {
             this.title = r.getTitle();
             this.description = r.getDescription();
             this.steps = r.getSteps();
-            this.category = r.getCategory();
+            this.categoryId = r.getCategoryId();
             this.difficulty = r.getDifficulty();
             this.videoUrl = r.getVideoUrl();
             this.editing = true;

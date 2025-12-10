@@ -157,6 +157,43 @@ table th, table td {
 .form-group {
     margin: 14px 0;
 }
+.form-group {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: #333;
+}
+
+/* Main input styling */
+.form-input, .select-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fff;
+    transition: 0.3s;
+}
+
+/* Hover + Focus */
+.form-input:hover,
+.select-input:hover {
+    border-color: #2bb36f;
+}
+
+.form-input:focus,
+.select-input:focus {
+    border-color: #2bb36f;
+    box-shadow: 0 0 4px rgba(43, 179, 111, 0.4);
+    outline: none;
+}
+
 .form-group label {
     font-weight: 600;
     margin-bottom: 6px;
@@ -498,4 +535,19 @@ table th, table td {
 /* Table Button Cell Alignment */
 .dashboard-table button {
     margin: 2px;
+}
+.download-btn {
+    background: #1e8fff;
+    color: white;
+    padding: 7px 6px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.download-btn:hover {
+    background: #006fe0;
 }

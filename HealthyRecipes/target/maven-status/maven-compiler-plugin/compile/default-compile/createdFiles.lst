@@ -4,11 +4,11 @@ ejb\AdminBeanLocal.class
 cdi\ContactBean.class
 cdi\RegisterBean.class
 Entity\Steps.class
+converter\CategoriesConverter.class
 rest\AdminResource.class
 cdi\HomeBean.class
 cdi\ProfileBean.class
 cdi\AdminActivityBean.class
-cdi\ContactBean$1.class
 Entity\ActivityLog.class
 cdi\AdminDashboardBean.class
 cdi\LoginBean.class
@@ -25,6 +25,8 @@ Entity\Ratings.class
 cdi\UserDashboardBean.class
 ejb\UserBean.class
 Entity\Ingredients.class
+Entity\Categories.class
+cdi\CategoryBean.class
 Entity\Users.class
 Entity\Comments.class
 com\mycompany\healthyrecipes\JakartaRestConfiguration.class

@@ -4,6 +4,7 @@
  */
 package ejb;
 
+import Entity.Categories;
 import Entity.Comments;
 import Entity.Likes;
 import jakarta.ejb.Local;
@@ -26,7 +27,7 @@ public Users getUserById(int userId);
 public List<Recipes> getAllRecipesDESC();
  
     Recipes getRecipeById(int recipeId);
-public List<String> getAllCategories();
+public List<Categories> getAllCategories();
 
     List<Recipes> getUserRecipes(int userId);
     String addRecipe(Recipes recipe);
@@ -36,9 +37,9 @@ String updateRecipe(Recipes recipe);
 void toggleLike(int recipeId, int userId);
 boolean isRecipeLiked(int recipeId, int userId);
 long getLikeCount(int recipeId);
-
+//public List<Categories> getCategoryList();
 List<Likes> getUserLikes(int userId);
-
+public Categories getCategoryById(int id);
 Recipes getRecipeByLike(int recipeId);
 
 void removeLike(int recipeId, int userId);
@@ -58,6 +59,9 @@ public boolean isEmailExists(String email);
 //for admin
 List<Recipes> getRecipesByUser(int userId);
 List<Recipes> getLikedRecipes(int userId);
+void addCategory(Categories c);
+void updateCategory(Categories c);
+void deleteCategory(int id);
 
 }
 

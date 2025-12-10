@@ -11,9 +11,9 @@
     </h:head>
 
     <h:body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
 
         <!-- Sidebar -->
         <div class="sidebar">
@@ -25,7 +25,9 @@
                 <ul>
                     <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
                     <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
-                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>    
+                    <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
+
                     <li><h:link outcome="/admin/adminActivity" styleClass="nav-link active">📌 My Activity</h:link></li>
                     <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
                     <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
@@ -59,12 +61,12 @@
                                 <tr>
                                     <td><h:graphicImage library="img" name="#{r.imageUrl}" style="width:60px;" /></td>
                                     <td>#{r.title}</td>
-                                    <td>#{r.category}</td>
+                                    <td>#{r.categoryId.categoryName}</td>
                                     <td>
                                         <h:commandLink value="✏ Edit"
                                                        action="#{recipeBean.adminEditRecipe(r.recipeId)}" 
                                                        styleClass="btn-edit btn-action"
-                                                                      />
+                                                       />
                                         |
                                         <h:commandButton value="Delete"
                                                          action="#{adminDashboardBean.deleteRecipe(r.recipeId)}"
@@ -119,14 +121,14 @@
                                                         style="width:60px; border-radius:6px;"/>
                                         <br/>#{c.recipeId.title}        
                                     </td>
-                                        <td>#{c.text}</td>
-                                        <td>#{c.createdAt}</td>
-                                        <td>
-                                            <h:commandButton value="Delete"
-                                                             action="#{adminActivityBean.deleteComment(c.commentId)}"
-                                                              styleClass="btn-delete btn-action"
-                                                             onclick="return confirm('Delete Comment?');" />
-                                        </td>
+                                    <td>#{c.text}</td>
+                                    <td>#{c.createdAt}</td>
+                                    <td>
+                                        <h:commandButton value="Delete"
+                                                         action="#{adminActivityBean.deleteComment(c.commentId)}"
+                                                         styleClass="btn-delete btn-action"
+                                                         onclick="return confirm('Delete Comment?');" />
+                                    </td>
                                 </tr>
                             </ui:repeat>
                         </tbody>

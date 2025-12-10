@@ -38,7 +38,7 @@
                     <h:form>
                         <h:commandLink value="Dashboard" action="#{loginBean.goToDashboard}" styleClass="dropdown-link"/>
                         <h:commandLink value="My Activity" action="#{loginBean.goToMyActivity}" styleClass="dropdown-link"/>
-                    <h:commandLink value="Logout" action="#{loginBean.logout}" styleClass="dropdown-link"/>
+                        <h:commandLink value="Logout" action="#{loginBean.logout}" styleClass="dropdown-link"/>
                     </h:form>
                 </div>
             </h:panelGroup>
@@ -61,15 +61,21 @@
         <!-- CATEGORIES -->
         <div class="section-title">Categories :</div>
 
-        
-        
-        <div class="category-box">
-            <a href="recipes.jsf" class="category-btn">All </a>
-            <ui:repeat value="#{homeBean.categoryList}" var="cat">
-                <a href="recipes.jsf?cat=#{cat}" class="category-btn">#{cat}</a>
-            </ui:repeat>
 
-        </div>
+
+        <!-- CATEGORY FILTERS -->
+<div class="category-box">
+    <a href="recipes.jsf" class="category-btn">All</a>
+
+    <!-- use var="c" and then reference c -->
+   <ui:repeat value="#{homeBean.categoryList}" var="c">
+    <a href="recipes.jsf?cat=#{c.categoryId}" class="category-btn">
+        #{c.categoryName}
+    </a>
+</ui:repeat>
+
+</div>
+
 
         <!-- RECENT RECIPES -->
         <div class="section-title">Recent Recipes :</div>
@@ -112,7 +118,7 @@
                 <!-- ABOUT US -->
                 <div class="footer-col">
                     <h3>About Us</h3>
-                    <p>This mini project is made by<br/> <b>Prakash S Khant</b>.</p>
+                    <p>This  project is made by<br/> <b>Prakash S Khant</b>.</p>
                 </div>
 
                 <!-- QUICK LINKS -->
@@ -129,7 +135,7 @@
                     <h3>Contact Us</h3>
                     <p>
                         XT9 Developers<br/>
-                        +91 9727669930<br/>
+                        +91 972XXXXXX0<br/>
                         xt9developers01@gmail.com
                     </p>
                 </div>

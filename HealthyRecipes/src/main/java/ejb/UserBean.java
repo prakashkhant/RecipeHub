@@ -4,6 +4,7 @@
  */
 package ejb;
 
+import Entity.Categories;
 import Entity.Comments;
 import Entity.Likes;
 import Entity.LikesPK;
@@ -23,61 +24,61 @@ public class UserBean implements UserBeanLocal {
     @PersistenceContext(unitName = "healthyPU")
     EntityManager em;
 
-@Override
-public Users login(String username, String password) {
-    try {
-        Users user = em.createQuery(
-                "SELECT u FROM Users u WHERE u.userName = :username",
-                Users.class)
-                .setParameter("username", username)
-                .getSingleResult();
+    @Override
+    public Users login(String username, String password) {
+        try {
+            Users user = em.createQuery(
+                    "SELECT u FROM Users u WHERE u.userName = :username",
+                    Users.class)
+                    .setParameter("username", username)
+                    .getSingleResult();
 
-        // 🔐 Check lock status
-        if (user.getLockTime() != null) {
-            long diff = new Date().getTime() - user.getLockTime().getTime();
-            long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+            // 🔐 Check lock status
+            if (user.getLockTime() != null) {
+                long diff = new Date().getTime() - user.getLockTime().getTime();
+                long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
 
-            if (minutes < 5) {
-                // account still locked
-                user.setMessage("Your account is locked for 5 minutes!");
-                return user;
-            } else {
-                // Reset lock
-                user.setFailedAttempts(0);
-                user.setLockTime(null);
-                em.merge(user);
-            }
-        }
-
-        // Password hash verify
-        String hashed = PasswordUtil.hashPassword(password);
-        if (!user.getPassword().equals(hashed)) {
-            int attempts = user.getFailedAttempts() + 1;
-            user.setFailedAttempts(attempts);
-
-            if (attempts >= 3) {
-                user.setLockTime(new Date());
-                em.merge(user);
-                user.setMessage("Too many failed attempts! Account locked for 5 min!");
-                return user;
+                if (minutes < 5) {
+                    // account still locked
+                    user.setMessage("Your account is locked for 5 minutes!");
+                    return user;
+                } else {
+                    // Reset lock
+                    user.setFailedAttempts(0);
+                    user.setLockTime(null);
+                    em.merge(user);
+                }
             }
 
+            // Password hash verify
+            String hashed = PasswordUtil.hashPassword(password);
+            if (!user.getPassword().equals(hashed)) {
+                int attempts = user.getFailedAttempts() + 1;
+                user.setFailedAttempts(attempts);
+
+                if (attempts >= 3) {
+                    user.setLockTime(new Date());
+                    em.merge(user);
+                    user.setMessage("Too many failed attempts! Account locked for 5 min!");
+                    return user;
+                }
+
+                em.merge(user);
+                user.setMessage("Wrong password! Attempts: " + attempts + "/3");
+                return user;
+            }
+
+            // Success login
+            user.setFailedAttempts(0);
+            user.setLockTime(null);
             em.merge(user);
-            user.setMessage("Wrong password! Attempts: " + attempts + "/3");
+            user.setMessage(null);
             return user;
+
+        } catch (Exception e) {
+            return null;
         }
-
-        // Success login
-        user.setFailedAttempts(0);
-        user.setLockTime(null);
-        em.merge(user);
-        user.setMessage(null);
-        return user;
-
-    } catch (Exception e) {
-        return null;
     }
-}
 
     @Override
     public String deleteRecipe(int recipeId) {
@@ -108,7 +109,8 @@ public Users login(String username, String password) {
     public List<Recipes> getAllRecipes() {
         return em.createNamedQuery("Recipes.findAll", Recipes.class).getResultList();
     }
-     @Override
+
+    @Override
     public List<Recipes> getAllRecipesDESC() {
         return em.createNamedQuery("Recipes.findAllDesc", Recipes.class).getResultList();
     }
@@ -172,11 +174,9 @@ public Users login(String username, String password) {
     }
 
     @Override
-    public List<String> getAllCategories() {
-        return em.createQuery(
-                "SELECT DISTINCT r.category FROM Recipes r WHERE r.category IS NOT NULL",
-                String.class
-        ).getResultList();
+    public List<Categories> getAllCategories() {
+        return em.createQuery("SELECT c FROM Categories c ORDER BY c.categoryName", Categories.class)
+                .getResultList();
     }
 
     @Override
@@ -302,36 +302,58 @@ public Users login(String username, String password) {
 
         return count > 0;
     }
-@Override
-public boolean isEmailExists(String email) {
-    Long count = em.createQuery(
-        "SELECT COUNT(u) FROM Users u WHERE u.email = :email",
-        Long.class
-    )
-    .setParameter("email", email)
-    .getSingleResult();
 
-    return count > 0;
-}
+    @Override
+    public boolean isEmailExists(String email) {
+        Long count = em.createQuery(
+                "SELECT COUNT(u) FROM Users u WHERE u.email = :email",
+                Long.class
+        )
+                .setParameter("email", email)
+                .getSingleResult();
+
+        return count > 0;
+    }
 //for admin
 
+    @Override
+    public List<Recipes> getRecipesByUser(int userId) {
+        return em.createQuery("SELECT r FROM Recipes r WHERE r.userId.userId = :uid ORDER BY r.createdAt DESC", Recipes.class)
+                .setParameter("uid", userId)
+                .getResultList();
+    }
+
+    @Override
+    public List<Recipes> getLikedRecipes(int userId) {
+        return em.createQuery(
+                "SELECT r FROM Recipes r WHERE r.recipeId IN "
+                + "(SELECT l.likesPK.recipeId FROM Likes l WHERE l.likesPK.userId = :uid)",
+                Recipes.class)
+                .setParameter("uid", userId)
+                .getResultList();
+    }
+
+    @Override
+    public Categories getCategoryById(int id) {
+        return em.find(Categories.class, id);
+    }
 @Override
-public List<Recipes> getRecipesByUser(int userId) {
-    return em.createQuery("SELECT r FROM Recipes r WHERE r.userId.userId = :uid ORDER BY r.createdAt DESC", Recipes.class)
-             .setParameter("uid", userId)
-             .getResultList();
+public void addCategory(Categories c) {
+    em.persist(c);
 }
 
 @Override
-public List<Recipes> getLikedRecipes(int userId) {
-    return em.createQuery(
-        "SELECT r FROM Recipes r WHERE r.recipeId IN " +
-        "(SELECT l.likesPK.recipeId FROM Likes l WHERE l.likesPK.userId = :uid)",
-        Recipes.class)
-        .setParameter("uid", userId)
-        .getResultList();
+public void updateCategory(Categories c) {
+    em.merge(c);
 }
 
+@Override
+public void deleteCategory(int id) {
+    Categories c = em.find(Categories.class, id);
+    if (c != null) {
+        em.remove(c);
+    }
+}
 
 
 }

@@ -15,6 +15,8 @@ import java.util.List;
 import jakarta.inject.Inject;
 import java.util.Date;
 import java.util.Calendar;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Named
 @SessionScoped
@@ -31,8 +33,7 @@ public class AdminDashboardBean implements Serializable {
     private int userPage = 0;
     private int recipePage = 0;
     private final int pageSize = 10;
-        // existing fields...
-  
+    // existing fields...
 
     // 🔽 NEW FIELDS FOR ACTIVITY LOGS
     private String activityFilter = "ALL"; // ALL, TODAY, WEEK, MONTH
@@ -40,7 +41,6 @@ public class AdminDashboardBean implements Serializable {
     private String searchTerm;    // For keyword search
     private int logPageIndex = 0; // 0-based index
     private final int logPageSize = 20; // you chose 20 per page
-
 
     public List<Users> getAllUsersPaginated() {
         List<Users> all = userBean.getAllUsers();
@@ -98,18 +98,17 @@ public class AdminDashboardBean implements Serializable {
         return "/admin/adminDashboard?faces-redirect=true";
     }
 
-public String deleteRecipe(Integer recipeId) {
-    Recipes recipe = userBean.getRecipeById(recipeId);
+    public String deleteRecipe(Integer recipeId) {
+        Recipes recipe = userBean.getRecipeById(recipeId);
 
-    if (recipe != null) {
-        adminBean.logActivity(loginBean.getLoggedUser(),
-                "Deleted recipe: " + recipe.getTitle());
+        if (recipe != null) {
+            adminBean.logActivity(loginBean.getLoggedUser(),
+                    "Deleted recipe: " + recipe.getTitle());
+        }
+
+        userBean.deleteRecipe(recipeId);
+        return "/admin/adminDashboard?faces-redirect=true";
     }
-
-    userBean.deleteRecipe(recipeId);
-    return "/admin/adminDashboard?faces-redirect=true";
-}
-
 
     public int getTotalUsers() {
         return userBean.getAllUsers().size();
@@ -143,8 +142,8 @@ public String deleteRecipe(Integer recipeId) {
             }
             userBean.updateUser(user);
             adminBean.logActivity(loginBean.getLoggedUser(),
-        "Changed role of: " + user.getFullName() +
-        " to " + user.getRole());
+                    "Changed role of: " + user.getFullName()
+                    + " to " + user.getRole());
 
         }
 
@@ -156,7 +155,7 @@ public String deleteRecipe(Integer recipeId) {
         return "/admin/manageUsers?faces-redirect=true";
     }
 
-      public List<ActivityLog> getAllActivities() {
+    public List<ActivityLog> getAllActivities() {
         return getFilteredActivities(); // if you want full filtered list somewhere
     }
 
@@ -186,8 +185,6 @@ public String deleteRecipe(Integer recipeId) {
         }
     }
 
-   
-  
     public String getActivityFilter() {
         return activityFilter;
     }
@@ -204,7 +201,6 @@ public String deleteRecipe(Integer recipeId) {
         this.filterUserId = filterUserId;
     }
 
-
     public String getSearchTerm() {
         return searchTerm;
     }
@@ -217,6 +213,7 @@ public String deleteRecipe(Integer recipeId) {
     public int getLogPageNumber() {
         return logPageIndex + 1;
     }
+
     private List<ActivityLog> getFilteredActivities() {
         List<ActivityLog> logs = adminBean.getAllActivities(); // already DESC
 
@@ -244,10 +241,10 @@ public String deleteRecipe(Integer recipeId) {
         // Search by keyword (activity text or user name)
         if (searchTerm != null && !searchTerm.trim().isEmpty()) {
             String keyword = searchTerm.toLowerCase();
-            logs.removeIf(a ->
-                    (a.getActivity() == null || !a.getActivity().toLowerCase().contains(keyword)) &&
-                    (a.getUserId() == null || a.getUserId().getFullName() == null ||
-                     !a.getUserId().getFullName().toLowerCase().contains(keyword))
+            logs.removeIf(a
+                    -> (a.getActivity() == null || !a.getActivity().toLowerCase().contains(keyword))
+                    && (a.getUserId() == null || a.getUserId().getFullName() == null
+                    || !a.getUserId().getFullName().toLowerCase().contains(keyword))
             );
         }
 
@@ -258,9 +255,11 @@ public String deleteRecipe(Integer recipeId) {
         int total = getFilteredActivities().size();
         return total == 0 ? 1 : (int) Math.ceil(total / (double) logPageSize);
     }
+
     public void resetLogPage() {
         logPageIndex = 0;
     }
+
     private boolean isToday(Date date, Date now) {
         Calendar c1 = Calendar.getInstance();
         c1.setTime(now);
@@ -284,8 +283,103 @@ public String deleteRecipe(Integer recipeId) {
         return c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR)
                 && c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH);
     }
+
     public List<Users> getAllUsers() {
         return userBean.getAllUsers();
+    }
+
+    public void downloadLogs() {
+        try {
+            List<ActivityLog> logs = getFilteredActivities();
+
+            StringBuilder csv = new StringBuilder();
+            csv.append("User,Activity,Timestamp\n");
+
+            for (ActivityLog log : logs) {
+                csv.append(log.getUserId().getFullName()).append(",");
+                csv.append("\"").append(log.getActivity().replace("\"", "\"\"")).append("\",");
+                csv.append(log.getTimestamp()).append("\n");
+            }
+
+            FacesContext facesContext = FacesContext.getCurrentInstance();
+            facesContext.getExternalContext().setResponseContentType("text/csv");
+            facesContext.getExternalContext().setResponseHeader(
+                    "Content-Disposition", "attachment; filename=activity_logs.csv"
+            );
+
+            facesContext.getExternalContext()
+                    .getResponseOutputWriter()
+                    .write(csv.toString());
+
+            facesContext.responseComplete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void downloadLogsExcel() {
+        try {
+            List<ActivityLog> logs = getFilteredActivities();
+
+            org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+            org.apache.poi.ss.usermodel.Sheet sheet = workbook.createSheet("Activity Logs");
+
+            // HEADER STYLE
+            org.apache.poi.ss.usermodel.CellStyle headerStyle = workbook.createCellStyle();
+            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerFont.setFontHeightInPoints((short) 12);
+            headerStyle.setFont(headerFont);
+
+            // BORDER STYLE
+            org.apache.poi.ss.usermodel.CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+            cellStyle.setBorderTop(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+            cellStyle.setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+            cellStyle.setBorderRight(org.apache.poi.ss.usermodel.BorderStyle.THIN);
+
+            // HEADER ROW
+            org.apache.poi.ss.usermodel.Row header = sheet.createRow(0);
+            String[] columns = {"User", "Activity", "Timestamp"};
+            for (int i = 0; i < columns.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = header.createCell(i);
+                cell.setCellValue(columns[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // DATA ROWS
+            int rowIndex = 1;
+            for (ActivityLog log : logs) {
+                org.apache.poi.ss.usermodel.Row row = sheet.createRow(rowIndex++);
+
+                row.createCell(0).setCellValue(log.getUserId().getFullName());
+                row.createCell(1).setCellValue(log.getActivity());
+                row.createCell(2).setCellValue(log.getTimestamp().toString());
+
+                for (int i = 0; i < 3; i++) {
+                    row.getCell(i).setCellStyle(cellStyle);
+                }
+            }
+
+            // AUTO SIZE COLUMNS
+            for (int i = 0; i < 3; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // SEND FILE AS DOWNLOAD
+            FacesContext fc = FacesContext.getCurrentInstance();
+            var ec = fc.getExternalContext();
+            ec.setResponseContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            ec.setResponseHeader("Content-Disposition", "attachment; filename=ActivityLogs.xlsx");
+
+            workbook.write(ec.getResponseOutputStream());
+            workbook.close();
+            fc.responseComplete();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

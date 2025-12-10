@@ -10,6 +10,7 @@
 package ejb;
 
 import Entity.ActivityLog;
+import Entity.Categories;
 import jakarta.ejb.Local;
 import java.util.List;
 import Entity.Users;
@@ -27,7 +28,8 @@ public interface AdminBeanLocal {
     String registerAdmin(Users admin);
     void logActivity(Users user, String activity);
 List<ActivityLog> getAllActivities();
-
+//public List<Categories> getCategoryList();
+List<Categories> getAllCategories();
 
 }
 

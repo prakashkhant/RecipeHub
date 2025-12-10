@@ -6,109 +6,115 @@
       xmlns:ui="jakarta.faces.facelets"
       xmlns:pt="jakarta.faces.passthrough">
 
-<h:head>
-    <title>Add Recipe - Admin</title>
-    <h:outputStylesheet name="css/dashboard.css" />
-</h:head>
+    <h:head>
+        <title>Add Recipe - Admin</title>
+        <h:outputStylesheet name="css/dashboard.css" />
+    </h:head>
 
-<h:body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
+    <h:body>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
 
-<div class="sidebar">
-    <h:form>
-        <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-    </h:form>
+        <div class="sidebar">
+            <h:form>
+                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+            </h:form>
 
-    <nav class="menu">
-        <ul>
-            <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
-            <li><h:link outcome="/admin/addRecipe" styleClass="nav-link active">Add Recipe</h:link></li>
-              <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
-                                  <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
-<li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
+            <nav class="menu">
+                <ul>
+                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
+                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link active">Add Recipe</h:link></li>
+                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                    <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
+                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
+                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
                     <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
-        </ul>
-    </nav>
+                </ul>
+            </nav>
 
-    <div class="logout-container">
-        <h:form>
-            <h:commandLink value="Logout"
-                           action="#{loginBean.logout}"
-                           onclick="return confirm('Are you sure?');"
-                           styleClass="logout-btn"/>
-        </h:form>
-    </div>
-</div>
-
-
-<div class="main-content">
-
-    <h1>Add Recipe (Admin)</h1>
-
-    <h:form enctype="multipart/form-data" styleClass="form-card">
-        <h:messages layout="list"
-                    infoClass="msg-success"
-                    errorClass="msg-error"
-                    style="margin-bottom:10px;" />
-
-        <div class="form-group">
-            <label>Title</label>
-            <h:inputText value="#{recipeBean.title}" required="true" styleClass="form-input"/>
+            <div class="logout-container">
+                <h:form>
+                    <h:commandLink value="Logout"
+                                   action="#{loginBean.logout}"
+                                   onclick="return confirm('Are you sure?');"
+                                   styleClass="logout-btn"/>
+                </h:form>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Description</label>
-            <h:inputTextarea value="#{recipeBean.description}" rows="3" styleClass="form-input"/>
+
+        <div class="main-content">
+
+            <h1>Add Recipe (Admin)</h1>
+
+            <h:form enctype="multipart/form-data" styleClass="form-card">
+                <h:messages layout="list"
+                            infoClass="msg-success"
+                            errorClass="msg-error"
+                            style="margin-bottom:10px;" />
+
+                <div class="form-group">
+                    <label>Title</label>
+                    <h:inputText value="#{recipeBean.title}" required="true" styleClass="form-input"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <h:inputTextarea value="#{recipeBean.description}" rows="3" styleClass="form-input"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Steps</label>
+                    <h:inputTextarea value="#{recipeBean.steps}" rows="6" styleClass="form-input"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+
+                    <h:selectOneMenu value="#{recipeBean.categoryId}" 
+                                     converter="categoryConverter"
+                                     styleClass="form-input select-input">
+
+                        <f:selectItem itemLabel="Select Category" itemValue="#{null}" />
+
+                        <f:selectItems value="#{recipeBean.categoryList}"
+                                       var="c"
+                                       itemValue="#{c}"
+                                       itemLabel="#{c.categoryName}" />
+                    </h:selectOneMenu>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Difficulty</label>
+                    <h:selectOneMenu value="#{recipeBean.difficulty}" styleClass="form-input" required="true">
+                        <f:selectItem itemLabel="Select Difficulty" itemValue="" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Easy" itemValue="EASY"/>
+                        <f:selectItem itemLabel="Medium" itemValue="MEDIUM"/>
+                        <f:selectItem itemLabel="Hard" itemValue="HARD"/>
+                    </h:selectOneMenu>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Image</label>
+                    <h:inputFile value="#{recipeBean.imageFile}" styleClass="form-input"/>
+                </div>
+
+                <div class="form-group">
+                    <label>Video URL (Optional)</label>
+                    <h:inputText value="#{recipeBean.videoUrl}" styleClass="form-input"/>
+                </div>
+
+                <div class="btn-container">
+                    <h:commandButton value="Submit Recipe"
+                                     action="#{recipeBean.saveRecipe}"
+                                     styleClass="btn-primary"/>
+                </div>
+
+            </h:form>
+
         </div>
 
-        <div class="form-group">
-            <label>Steps</label>
-            <h:inputTextarea value="#{recipeBean.steps}" rows="6" styleClass="form-input"/>
-        </div>
-
-        <div class="form-group">
-            <label>Category</label>
-            <h:selectOneMenu value="#{recipeBean.category}" styleClass="form-input" required="true">
-                <f:selectItem itemLabel="Select Category" itemValue="" noSelectionOption="true"/>
-                <f:selectItem itemLabel="Veg" itemValue="Veg"/>
-                <f:selectItem itemLabel="Non-Veg" itemValue="Non-Veg"/>
-                <f:selectItem itemLabel="Breakfast" itemValue="Breakfast"/>
-                <f:selectItem itemLabel="Soup" itemValue="Soup"/>
-                <f:selectItem itemLabel="Sweets" itemValue="Sweets"/>
-            </h:selectOneMenu>
-        </div>
-
-        <div class="form-group">
-            <label>Difficulty</label>
-            <h:selectOneMenu value="#{recipeBean.difficulty}" styleClass="form-input" required="true">
-                <f:selectItem itemLabel="Select Difficulty" itemValue="" noSelectionOption="true"/>
-                <f:selectItem itemLabel="Easy" itemValue="EASY"/>
-                <f:selectItem itemLabel="Medium" itemValue="MEDIUM"/>
-                <f:selectItem itemLabel="Hard" itemValue="HARD"/>
-            </h:selectOneMenu>
-        </div>
-
-        <div class="form-group">
-            <label>Select Image</label>
-            <h:inputFile value="#{recipeBean.imageFile}" styleClass="form-input"/>
-        </div>
-
-        <div class="form-group">
-            <label>Video URL (Optional)</label>
-            <h:inputText value="#{recipeBean.videoUrl}" styleClass="form-input"/>
-        </div>
-
-        <div class="btn-container">
-            <h:commandButton value="Submit Recipe"
-                             action="#{recipeBean.saveRecipe}"
-                             styleClass="btn-primary"/>
-        </div>
-
-    </h:form>
-
-</div>
-
-</h:body>
+    </h:body>
 </html>

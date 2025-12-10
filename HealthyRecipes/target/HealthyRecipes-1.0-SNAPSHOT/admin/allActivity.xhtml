@@ -10,72 +10,78 @@
         <title>Admin Activity</title>
         <h:outputStylesheet name="css/dashboard.css" />
         <style>
-           .header {
-    background: #ffffff;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.08);
-    display: flex;
-    align-items: center;
-}
+            .header {
+                background: #ffffff;
+                padding: 15px 20px;
+                margin-bottom: 15px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.08);
+                display: flex;
+                align-items: center;
+            }
 
-.header h2 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #1e3f3e;
-    animation: blink 1.2s infinite ease-in-out;
-}
+            .header h2 {
+                margin: 0;
+                font-size: 16px;
+                font-weight: 600;
+                color: #1e3f3e;
+                animation: blink 1.2s infinite ease-in-out;
+            }
 
-/* Blinking animation */
-@keyframes blink {
-    0 { opacity: 1; }
-    50% { opacity: 0.4; }
-    100% { opacity: 1; }
-}
-.filter-box {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 15px;
-    align-items: center;
-}
+            /* Blinking animation */
+            @keyframes blink {
+                0 {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.4;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+            .filter-box {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 15px;
+                align-items: center;
+            }
 
-.filter-item {
-    display: flex;
-    flex-direction: column;
-    font-size: 13px;
-}
+            .filter-item {
+                display: flex;
+                flex-direction: column;
+                font-size: 13px;
+            }
 
-.filter-item label {
-    margin-bottom: 4px;
-    font-weight: 600;
-    color: #555;
-}
+            .filter-item label {
+                margin-bottom: 4px;
+                font-weight: 600;
+                color: #555;
+            }
 
-.filter-item select,
-.filter-item input {
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: 1px solid #d0d0d0;
-    min-width: 160px;
-}
+            .filter-item select,
+            .filter-item input {
+                padding: 6px 8px;
+                border-radius: 6px;
+                border: 1px solid #d0d0d0;
+                min-width: 160px;
+            }
 
-.pagination {
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+            .pagination {
+                margin-top: 12px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-            </style>
+        </style>
     </h:head>
 
     <h:body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
 
         <!-- Sidebar -->
         <div class="sidebar">
@@ -88,6 +94,8 @@
                     <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Admin Dashboard</h:link></li>
                     <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
                     <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                                        <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
+
                     <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
                     <li><h:link outcome="/admin/allActivity" styleClass="nav-link active">All Activity</h:link></li>
                     <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
@@ -130,97 +138,106 @@
             <div class="header">
                 <h2>Real-Time Records of System Operations, User Actions, and Admin Activities</h2>
             </div>
-       <div class="table-box">
-    <h1>Recent Activities</h1>
+            <div class="table-box">
+                <h1>Recent Activities</h1>
 
-    <h:form id="activityForm">
-        <!-- FILTER BAR -->
-        <div class="filter-box">
-            <div class="filter-item">
-                <label>Filter by Time:</label>
-                <h:selectOneMenu value="#{adminDashboardBean.activityFilter}">
-                    <f:selectItem itemLabel="All" itemValue="ALL" />
-                    <f:selectItem itemLabel="Today" itemValue="TODAY" />
-                    <f:selectItem itemLabel="Last 7 Days" itemValue="WEEK" />
-                    <f:selectItem itemLabel="This Month" itemValue="MONTH" />
-                   <f:ajax event="change"
-        listener="#{adminDashboardBean.resetLogPage}"
-        execute="@form"
-        render="@form" />
+                <h:form id="activityForm">
+                    <!-- FILTER BAR -->
+                    <div class="filter-box">
+                        <div class="filter-item">
+                            <label>Filter by Time:</label>
+                            <h:selectOneMenu value="#{adminDashboardBean.activityFilter}">
+                                <f:selectItem itemLabel="All" itemValue="ALL" />
+                                <f:selectItem itemLabel="Today" itemValue="TODAY" />
+                                <f:selectItem itemLabel="Last 7 Days" itemValue="WEEK" />
+                                <f:selectItem itemLabel="This Month" itemValue="MONTH" />
+                                <f:ajax event="change"
+                                        listener="#{adminDashboardBean.resetLogPage}"
+                                        execute="@form"
+                                        render="@form" />
 
-                </h:selectOneMenu>
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>User:</label>
+                            <h:selectOneMenu value="#{adminDashboardBean.filterUserId}">
+                                <f:selectItem itemLabel="All Users" itemValue="0" />
+                                <f:selectItems value="#{adminDashboardBean.allUsers}"
+                                               var="u"
+                                               itemLabel="#{u.fullName}"
+                                               itemValue="#{u.userId}" />
+                                <f:ajax event="change"
+                                        listener="#{adminDashboardBean.resetLogPage}"
+                                        execute="@form"
+                                        render="@form" />
+
+                            </h:selectOneMenu>
+                        </div>
+
+                        <div class="filter-item">
+                            <label>Search:</label>
+                            <h:inputText value="#{adminDashboardBean.searchTerm}"
+                                         pt:placeholder="Search activity or user...">
+                                <f:ajax event="change"
+                                        listener="#{adminDashboardBean.resetLogPage}"
+                                        execute="@form"
+                                        render="@form" />
+
+                            </h:inputText>
+                        </div>
+                        <div class="download-btn">
+                     <h:commandButton value="Download Logs"
+                 styleClass="download-btn"
+                 action="#{adminDashboardBean.downloadLogsExcel}" />
+
+                        </div>
+                    </div>
+                    <h:panelGroup id="activityTable">
+                        <!-- TABLE -->
+                        <table id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Activity</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <ui:repeat value="#{adminDashboardBean.allActivitiesPaginated}" var="a">
+                                    <tr>
+                                        <td>#{a.userId.fullName}</td>
+                                        <td>#{a.activity}</td>
+                                        <td>#{a.timestamp}</td>
+                                    </tr>
+                                </ui:repeat>
+                            </tbody>
+                        </table>
+                        </h:panelGroup>
+                        <!-- PAGINATION -->
+                        <h:panelGroup id="logPagination">
+                            <div id="logPagination" class="pagination">
+                                <h:commandButton value="Previous"
+                                                 action="#{adminDashboardBean.previousLogPage}"
+                                                 disabled="#{adminDashboardBean.logPageNumber == 1}">
+                                    <f:ajax render="activityTable logPagination" />
+                                </h:commandButton>
+
+                                <span>
+                                    Page #{adminDashboardBean.logPageNumber}
+                                    of #{adminDashboardBean.logTotalPages}
+                                </span>
+
+                                <h:commandButton value="Next"
+                                                 action="#{adminDashboardBean.nextLogPage}"
+                                                 disabled="#{adminDashboardBean.logPageNumber >= adminDashboardBean.logTotalPages}">
+                                    <f:ajax render="activityTable logPagination" />
+                                </h:commandButton>
+
+                            </div>
+                        </h:panelGroup>
+                </h:form>
             </div>
-
-            <div class="filter-item">
-                <label>User:</label>
-                <h:selectOneMenu value="#{adminDashboardBean.filterUserId}">
-                    <f:selectItem itemLabel="All Users" itemValue="0" />
-                    <f:selectItems value="#{adminDashboardBean.allUsers}"
-                                   var="u"
-                                   itemLabel="#{u.fullName}"
-                                   itemValue="#{u.userId}" />
-             <f:ajax event="change"
-        listener="#{adminDashboardBean.resetLogPage}"
-        execute="@form"
-        render="@form" />
-
-                </h:selectOneMenu>
-            </div>
-
-            <div class="filter-item">
-                <label>Search:</label>
-                <h:inputText value="#{adminDashboardBean.searchTerm}"
-                             pt:placeholder="Search activity or user...">
-                  <f:ajax event="change"
-        listener="#{adminDashboardBean.resetLogPage}"
-        execute="@form"
-        render="@form" />
-
-                </h:inputText>
-            </div>
-        </div>
-
-        <!-- TABLE -->
-        <table id="activityTable">
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Activity</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ui:repeat value="#{adminDashboardBean.allActivitiesPaginated}" var="a">
-                    <tr>
-                        <td>#{a.userId.fullName}</td>
-                        <td>#{a.activity}</td>
-                        <td>#{a.timestamp}</td>
-                    </tr>
-                </ui:repeat>
-            </tbody>
-        </table>
-
-        <!-- PAGINATION -->
-        <div id="logPagination" class="pagination">
-            <h:commandButton value="Previous"
-                             action="#{adminDashboardBean.previousLogPage}"
-                             disabled="#{adminDashboardBean.logPageNumber == 1}">
-                <f:ajax render="activityTable logPagination" />
-            </h:commandButton>
-
-            <span>
-                Page #{adminDashboardBean.logPageNumber}
-                of #{adminDashboardBean.logTotalPages}
-            </span>
-
-            <h:commandButton value="Next"
-                             action="#{adminDashboardBean.nextLogPage}"
-                             disabled="#{adminDashboardBean.logPageNumber == adminDashboardBean.logTotalPages}">
-                <f:ajax render="activityTable logPagination" />
-            </h:commandButton>
-        </div>
-    </h:form>
-</div>
 
 
         </div>

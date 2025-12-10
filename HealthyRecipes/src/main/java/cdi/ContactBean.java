@@ -5,17 +5,9 @@ import jakarta.inject.Named;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.application.FacesMessage;
 
-import jakarta.mail.Authenticator;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
-import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeMessage;
 
 import java.io.Serializable;
-import java.util.Properties;
+import java.net.URLEncoder;
 
 @Named(value = "contactBean")
 @RequestScoped
@@ -51,67 +43,47 @@ public class ContactBean implements Serializable {
     }
 
     // ===== ACTION METHOD =====
-    public String send() {
-        try {
-            sendEmail();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Thank you!",
-                            "Your message has been sent."));
+public String send() {
+    try {
+        sendToSheet();
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_INFO,
+            "Thank you!", "Your message has been sent."));
+        
+        name = "";
+        email = "";
+        message = "";
 
-            // clear form
-            name = "";
-            email = "";
-            message = "";
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Error",
-                            "Something went wrong while sending email."));
-        }
-
-        return null; // stay on same page
+    } catch (Exception e) {
+        e.printStackTrace();
+        FacesContext.getCurrentInstance().addMessage(null,
+            new FacesMessage(FacesMessage.SEVERITY_ERROR,
+            "Error", "Unable to submit message."));
     }
+
+    return null;
+}
 
     // ===== EMAIL SENDING LOGIC =====
-    private void sendEmail() throws MessagingException {
-        // receiver
-        String to = "prakashkhant1923@gmail.com";
+    private void sendToSheet() throws Exception {
+    String url = "https://script.google.com/macros/s/AKfycbz2KBz9paoMgv5UgiFsja3YtAK4RsEq6B0ocQF9UmNJEKsEU7IdT6RdFWax2duX1y4VLg/exec";
 
-        // sender (your Gmail) – change this
-        String from = "prakashkhant1923@gmail.com";      // your Gmail ID
-        String username = "prakashkhant1923@gmail.com";  // same as above
-        String password = "iddr aqnz pzkt guei";    // Gmail App Password
+    String data = "name=" + URLEncoder.encode(name, "UTF-8")
+                + "&email=" + URLEncoder.encode(email, "UTF-8")
+                + "&message=" + URLEncoder.encode(message, "UTF-8");
 
-        // Gmail SMTP settings
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+    java.net.URL obj = new java.net.URL(url);
+    java.net.HttpURLConnection con = (java.net.HttpURLConnection) obj.openConnection();
 
-        Session session = Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
+    con.setRequestMethod("POST");
+    con.setDoOutput(true);
 
-        Message msg = new MimeMessage(session);
-        msg.setFrom(new InternetAddress(from));
-        msg.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse(to));
-        msg.setSubject("New Contact Message - Healthy Recipes");
+    java.io.OutputStream os = con.getOutputStream();
+    os.write(data.getBytes());
+    os.flush();
+    os.close();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("Name: ").append(name).append("\n");
-        sb.append("Email: ").append(email).append("\n\n");
-        sb.append("Message:\n").append(message);
+    con.getResponseCode(); // Just to trigger request
+}
 
-        msg.setText(sb.toString());
-
-        Transport.send(msg);
-    }
 }

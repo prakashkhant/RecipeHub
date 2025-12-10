@@ -10,9 +10,9 @@
     </h:head>
 
     <h:body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
 
         <div class="sidebar">
             <h:form>
@@ -24,6 +24,8 @@
                     <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link ">Admin Dashboard</h:link></li>
                     <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
                     <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+                                        <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
+
                     <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
                     <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
                     <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
@@ -31,7 +33,7 @@
             </nav>
 
             <div class="logout-container">
-               <h:form>
+                <h:form>
                     <h:commandLink value="Logout"
                                    action="#{loginBean.logout}"
                                    onclick="return confirm('Are you sure?');"
@@ -62,13 +64,18 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Category</label>
-                    <h:selectOneMenu value="#{recipeBean.category}" styleClass="form-input">
-                        <f:selectItem itemLabel="Veg" itemValue="Veg"/>
-                        <f:selectItem itemLabel="Non-Veg" itemValue="Non-Veg"/>
-                        <f:selectItem itemLabel="Breakfast" itemValue="Breakfast"/>
-                        <f:selectItem itemLabel="Soup" itemValue="Soup"/>
-                        <f:selectItem itemLabel="Sweets" itemValue="Sweets"/>
+                    <label class="form-label">Category</label>
+
+                    <h:selectOneMenu value="#{recipeBean.categoryId}" 
+                                     converter="categoryConverter"
+                                     styleClass="form-input select-input">
+
+                        <f:selectItem itemLabel="Select Category" itemValue="#{null}" />
+
+                        <f:selectItems value="#{recipeBean.categoryList}"
+                                       var="c"
+                                       itemValue="#{c}"
+                                       itemLabel="#{c.categoryName}" />
                     </h:selectOneMenu>
                 </div>
 

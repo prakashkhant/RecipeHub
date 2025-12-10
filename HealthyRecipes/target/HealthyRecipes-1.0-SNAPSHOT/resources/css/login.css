@@ -17,7 +17,7 @@ body.login-body {
    /*background-image: url("bg.jpg");*/
 background: 
     linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)),
-    url("#{resource['img/bg.jpg']}");
+    url("#{resource['img/bg.png']}");
 
 background-size: cover;
 background-position: center;
@@ -50,10 +50,10 @@ background-repeat: no-repeat;
 }
 
 .form-box {
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.35);
     padding: 40px;
     border-radius: 15px;
-    width: 350px;
+    width: 300px;
     text-align: center;
 }
 
@@ -69,6 +69,7 @@ background-repeat: no-repeat;
     width: 100%;
     padding: 12px;
     margin-top: 15px;
+    margin-left: 10px;
     background: #FFC93C;
     color: black;
     border: none;

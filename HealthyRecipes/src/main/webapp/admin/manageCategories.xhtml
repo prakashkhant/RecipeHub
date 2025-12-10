@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:pt="jakarta.faces.passthrough">
+
+<h:head>
+    <title>Manage Categories - Admin</title>
+    <h:outputStylesheet name="css/dashboard.css" />
+    <style>
+       /* WRAP BOTH BOXES SIDE BY SIDE */
+.category-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+/* LEFT: Add Category Box */
+.category-add-box {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* RIGHT: Category Table Box */
+.category-table-box {
+    flex: 2;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    width: 50%;
+}
+
+/* Table Styling */
+.category-table-box table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.category-table-box table th,
+.category-table-box table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Buttons */
+.btn-primary {
+    background: #28a745 !important;
+    color: #fff !important;
+    padding: 8px 14px !important;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn {
+    background: #dc3545 !important;
+    color: white !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+}
+
+.edit-btn {
+    background: #007bff !important;
+    color: white !important;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+}
+.input-text {
+    padding: 10px 14px;
+    font-size: 15px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    background: #fafafa;
+}
+
+/* Focus Effect */
+.input-text:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 4px rgba(40, 167, 69, 0.3);
+    background: #fff;
+}
+
+/* Placeholder */
+.input-text::placeholder {
+    color: #888;
+}
+textarea.input-text {
+    resize: vertical;
+    min-height: 80px;
+}.msg-success {
+    padding: 10px 14px;
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.msg-error {
+    padding: 10px 14px;
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+
+        </style>
+</h:head>
+
+<h:body>
+
+<f:metadata>
+    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+</f:metadata>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h:form>
+        <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+    </h:form>
+
+    <nav class="menu">
+        <ul>
+            <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Dashboard</h:link></li>
+            <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
+            <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
+            <li><h:link outcome="/admin/manageCategories" styleClass="nav-link active">Manage Categories</h:link></li>
+            <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
+            <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
+            <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
+        </ul>
+    </nav>
+
+    <div class="logout-container">
+        <h:form>
+            <h:commandLink value="Logout"
+                           action="#{loginBean.logout}"
+                           onclick="return confirm('Are you sure?');"
+                           styleClass="logout-btn"/>
+        </h:form>
+    </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+    <div class="header">
+        <h1>Manage Categories</h1>
+    </div>
+
+    <div class="cards">
+        <div class="card"><h3>Total Categories</h3><h2>#{categoryBean.totalCategories}</h2></div>
+    </div>
+<h:messages id="msg"
+            layout="list"
+            infoClass="msg-success"
+            errorClass="msg-error"
+            style="margin-bottom: 15px;" />
+<div class="category-container">
+
+
+    <!-- LEFT ADD CATEGORY -->
+    <div class="category-add-box">
+        <h3>Add New Category</h3>
+
+        <h:form>
+            <h:inputText value="#{categoryBean.newCategoryName}"
+                         pt:placeholder="Category name"
+                         styleClass="input-text" required="true"/>
+
+            <br/><br/>
+
+            
+
+            <h:commandButton value="Add Category"
+                             action="#{categoryBean.addCategory}"
+                             styleClass="btn-primary"/>
+        </h:form>
+    </div>
+
+    <!-- RIGHT CATEGORY TABLE -->
+    <div class="category-table-box">
+        <h3>Category List</h3>
+
+        <h:form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <ui:repeat value="#{categoryBean.paginatedCategories}" var="c">
+                        <tr>
+                            <td>#{c.categoryId}</td>
+                            <td >
+                                <h:inputText value="#{c.categoryName}"
+                                              styleClass="input-text" />
+                            </td>
+                           
+
+                            <td>
+                                <h:commandButton value="Update"
+                                                 action="#{categoryBean.updateCategory(c)}"
+                                                 styleClass="edit-btn"/>
+|
+                                <h:commandButton value="Delete"
+                                                 action="#{categoryBean.deleteCategory(c.categoryId)}"
+                                                 styleClass="delete-btn"
+                                                 onclick="return confirm('Delete this category?')"/>
+                            </td>
+                        </tr>
+                    </ui:repeat>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <h:commandButton value="Previous"
+                                 action="#{categoryBean.previousPage}"
+                                 disabled="#{categoryBean.page == 1}" />
+
+                <span>Page #{categoryBean.page}</span>
+
+                <h:commandButton value="Next"
+                                 action="#{categoryBean.nextPage}" />
+            </div>
+
+        </h:form>
+    </div>
+
+</div>
+
+</div>
+
+</h:body>
+</html>
