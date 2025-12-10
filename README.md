@@ -1,6 +1,3 @@
-Sure Tinu! Here is a README in the **same clean style**, but fully customized for **your RecipeHub Java EE project** (JSF + EJB + MySQL).
-
----
 
 # **RecipeHub**
 
@@ -169,13 +166,7 @@ You may modify and use the code with attribution.
 **Developed & Maintained by:**
 **Prakash Khant**
 GitHub: [https://github.com/prakashkhant](https://github.com/prakashkhant)
-
+Email: prakashkhant1923@gmail.com
 If you'd like help deploying, improving UI, or fixing JSF/EJB issues, feel free to open an issue or message.
 
----
 
-If you want, I can also:
-✅ Add screenshots section
-✅ Add ER diagram
-✅ Add deployment guide for GitHub + Payara
-Just tell me!
