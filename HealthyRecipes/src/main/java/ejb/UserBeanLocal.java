@@ -62,6 +62,6 @@ List<Recipes> getLikedRecipes(int userId);
 void addCategory(Categories c);
 void updateCategory(Categories c);
 void deleteCategory(int id);
-
+public List<Comments> getAllComments();
 }
 

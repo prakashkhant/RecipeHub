@@ -8,53 +8,31 @@
     <h:head>
         <title>User Dashboard - Healthy Recipes</title>
         <h:outputStylesheet name="css/dashboard.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
         <f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
-</f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
+        </f:metadata>
 
         <!-- Sidebar -->
 
         <!-- Sidebar + Header Include Later (Same UI as Dashboard) -->
-        <div class="sidebar">
-            <h:form>
-<h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-
-            </h:form>
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/user/userDashboard" styleClass="nav-link active">Dashboard</h:link></li>
-                    <li><h:link outcome="/user/addRecipe" styleClass="nav-link ">Add Recipe</h:link></li>
-                    <li><h:link outcome="/user/profile" styleClass="nav-link">Update Profile</h:link></li>
-<li><h:link outcome="/user/likedRecipes" styleClass="nav-link">Liked Recipes</h:link></li>
-<li><h:link outcome="/user/activity" styleClass="nav-link">📌 My Activity</h:link></li>
-
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout"
-                                   action="#{loginBean.logout}"
-                                   onclick="return confirm('Are you sure you want to logout?');"
-                                   styleClass="logout-btn" />
-                </h:form>
-            </div>
-        </div>
-
+  <ui:include src="/user/user_sidebar.xhtml">
+    <ui:param name="activePage" value="dashboard" />
+</ui:include>
 
 
         <!-- Content -->
         <div class="main-content">
-<h:messages 
-    id="msg"
-    globalOnly="true"
-    layout="table"
-    style="color:#fff;background:#27ae60;
-           padding:10px;border-radius:8px;margin-bottom:10px;"
-/>
+            <h:messages 
+                id="msg"
+                globalOnly="true"
+                layout="table"
+                style="color:#fff;background:#27ae60;
+                padding:10px;border-radius:8px;margin-bottom:10px;"
+                />
 
             <div class="header">
                 <h1>Hello, #{loginBean.loggedUser.fullName}! 👋</h1>
@@ -79,20 +57,20 @@
                     <table>
                         <thead>
                             <tr>
-                               <th>Sr no.</th> <th>Title</th><th>Category</th><th>Difficulty</th><th>Created</th><th>Action</th>
+                                <th>Sr no.</th> <th>Title</th><th>Category</th><th>Difficulty</th><th>Created</th><th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <ui:repeat value="#{userDashboardBean.userRecipes}" var="r">
                                 <tr>
-<td>#{r.recipeId}</td>
+                                    <td>#{r.recipeId}</td>
                                     <td>#{r.title}</td>
                                     <td>#{r.categoryId.categoryName}</td>
                                     <td>#{r.difficulty}</td>
                                     <td>#{r.createdAt}</td>
                                     <td>
                                         <h:commandLink action="#{recipeBean.editRecipe(r.recipeId)}"
-               styleClass="btn-edit btn-action">Edit</h:commandLink> |
+                                                       styleClass="btn-edit btn-action">Edit</h:commandLink> |
                                         <h:commandLink 
                                             value="Delete" 
                                             action="#{userDashboardBean.deleteRecipe(r.recipeId)}"

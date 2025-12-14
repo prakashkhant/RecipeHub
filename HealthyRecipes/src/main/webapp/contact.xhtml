@@ -7,7 +7,26 @@
     <h:head>
         <title>Contact Us - Healthy Recipes</title>
         <h:outputStylesheet name="css/main.css" />
-    </h:head>
+        <style>
+            .msg-success {
+    padding: 10px 14px;
+    background: #d4edda;
+    border-left: 4px solid #28a745;
+    color: #155724;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.msg-error {
+    padding: 10px 14px;
+    background: #f8d7da;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+        </style>    </h:head>
 
     <h:body>
 
@@ -20,7 +39,7 @@
                 <a href="contact.jsf" class="active">Contact</a>
             </div>
 
-           
+
             <!-- If NOT logged in -->
             <h:panelGroup rendered="#{loginBean.loggedUser == null}">
                 <a href="login.jsf" class="login-btn">Login / Register</a>
@@ -62,44 +81,57 @@
                 <p>Follow us for tasty &amp; healthy updates!</p>
             </div>
 
-            <!-- Contact Form -->
-            <div class="contact-form-box">
-                <h2>Send Us a Message</h2>
+        <!-- If NOT logged in -->
+<h:panelGroup rendered="#{loginBean.loggedUser == null}">
+    <div class="contact-form-box">
+        <h2>Login Required</h2>
+        <p>Please log in to send us a message.</p>
+        <a href="login.jsf" class="login-btn">Login / Register</a>
+    </div>
+</h:panelGroup>
 
-                <h:form styleClass="contact-form">
-<h:messages id="msg"
-            layout="h6"
+<!-- If logged in -->
+<h:panelGroup rendered="#{loginBean.loggedUser != null}">
+    <div class="contact-form-box">
+        <h2>Send Us a Message</h2>
+
+        <h:form styleClass="contact-form">
+
+            <!-- Auto-filled full name -->
+            <h:inputText  
+                value="#{contactBean.name}"
+                styleClass="input-field"
+                readonly="true"
+                pt:readonly="true"
+                />
+
+            <!-- Auto-filled email -->
+            <h:inputText  
+                value="#{contactBean.email}"
+                styleClass="input-field"
+                readonly="true"
+                pt:readonly="true"
+                />
+
+            <h:inputTextarea 
+                value="#{contactBean.message}"
+                styleClass="input-field message-field"
+                required="true"
+                requiredMessage="Message is required"
+                pt:placeholder="Your Message"
+                rows="4" />
+
+            <h:commandButton value="Submit"
+                             styleClass="submit-btn"
+                             action="#{contactBean.send}" />
+        </h:form>
+        <h:messages id="msg"
             infoClass="msg-success"
             errorClass="msg-error"
             style="margin-bottom: 15px;" />
-                    <h:inputText  
-                        value="#{contactBean.name}"
-                        styleClass="input-field"
-                        required="true"
-                        requiredMessage="Name is required"
-                        pt:placeholder="Your Name" />
-
-                    <h:inputText  
-                        value="#{contactBean.email}"
-                        styleClass="input-field"
-                        required="true"
-                        requiredMessage="Email is required"
-                        pt:placeholder="Your Email" />
-
-                    <h:inputTextarea 
-                        value="#{contactBean.message}"
-                        styleClass="input-field message-field"
-                        required="true"
-                        requiredMessage="Message is required"
-                        pt:placeholder="Your Message"
-                        rows="4" />
-
-                    <h:commandButton value="Submit"
-                                     styleClass="submit-btn"
-                                     action="#{contactBean.send}" />
-                </h:form>
-
-            </div>
+    </div>
+    
+</h:panelGroup>
 
 
 

@@ -354,6 +354,11 @@ public void deleteCategory(int id) {
         em.remove(c);
     }
 }
+@Override
+public List<Comments> getAllComments() {
+    return em.createQuery("SELECT c FROM Comments c ORDER BY c.createdAt DESC", Comments.class)
+             .getResultList();
+}
 
 
 }

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Healthy Recipes - Home</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #fafafa;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .navbar h2 {
+            margin: 0;
+        }
+
+        .nav-links a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        .login-btn {
+            padding: 8px 15px;
+            background: #ffffff;
+            color: #2d6a4f;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px;
+            background: #e9f5ee;
+        }
+
+        .hero-text {
+            max-width: 50%;
+        }
+
+        .hero-text h1 {
+            font-size: 36px;
+            color: #2d6a4f;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .hero img {
+            width: 380px;
+            border-radius: 15px;
+        }
+
+        /* Categories */
+        .section-title {
+            margin-left: 40px;
+            margin-top: 40px;
+            font-size: 24px;
+            color: #1b4332;
+            font-weight: bold;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px 40px;
+            gap: 20px;
+        }
+
+        .cat-box {
+            width: 150px;
+            height: 70px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #2d6a4f;
+        }
+
+        /* Recent Recipes */
+        .recipes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px 40px;
+        }
+
+        .recipe-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+            padding-bottom: 15px;
+        }
+
+        .recipe-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .recipe-card h4 {
+            margin: 12px;
+            color: #2d6a4f;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2d6a4f;
+            color: white;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+
+        .footer div {
+            width: 45%;
+        }
+
+        .contact-box {
+            background: white;
+            color: #2d6a4f;
+            padding: 20px;
+            border-radius: 12px;
+        }
+    
+
+/* ---------- FOOTER CSS ---------- */
+.footer {
+    width: 100%;
+    background: #111; /* darker bg */
+    color: white;
+    padding: 60px 0 20px;
+    text-align: center;
+}
+.footer .foot-box {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 0 40px;
+}
+.footer h3 {
+    font-size: 20px;
+    color: #ffb347;
+    margin-bottom: 12px;
+}
+.footer p, .footer span {
+    font-size: 15px;
+}
+.right-foot {
+    text-align: right;
+}
+.left-foot {
+    text-align: left;
+}
+.footer .copy {
+    margin-top: 35px;
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+</style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <h2>Healthy Recipes</h2>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Recipes</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+        </div>
+        <a href="#" class="login-btn">Login / Register</a>
+    </div>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Welcome to Healthy Recipe Hub</h1>
+            <p>Your best place to explore delicious, healthy<br> & category‑wise recipes.</p>
+        </div>
+        <img src="https://source.unsplash.com/600x400/?healthy-food" alt="Dish Image">
+    </div>
+
+    <!-- Categories -->
+    <div class="section-title">Categories :</div>
+    <div class="categories">
+        <div class="cat-box">Breakfast</div>
+        <div class="cat-box">Lunch</div>
+        <div class="cat-box">Dinner</div>
+        <div class="cat-box">Snacks</div>
+        <div class="cat-box">Vegan</div>
+        <div class="cat-box">Desserts</div>
+        <div class="cat-box">Protein Rich</div>
+        <div class="cat-box">Low Calorie</div>
+    </div>
+
+    <!-- Recent Recipes -->
+    <div class="section-title">Recent Recipes :</div>
+    <div class="recipes">
+        <div class="recipe-card">
+            <img src="https://source.unsplash.com/400x300/?salad" />
+            <h4>Green Salad</h4>
+        </div>
+        <div class="recipe-card">
+            <img src="https://source.unsplash.com/400x300/?pasta" />
+            <h4>Healthy Pasta</h4>
+        </div>
+        <div class="recipe-card">
+            <img src="https://source.unsplash.com/400x300/?smoothie" />
+            <h4>Fruit Smoothie</h4>
+        </div>
+    </div>
+
+
+    
+    <!-- Added Custom Footer Section -->
+    <section class="footer">
+    <div class="container foot-box">
+        <div class="left-foot">
+            <h3>ABOUT US</h3>
+            <p>This mini project is made by <span>Prakash S Khant.</span></p>
+        </div>
+
+        <div class="right-foot">
+            <h3>CONTACT US</h3>
+            <span>XT9 Developers</span><br>
+            <span>+(91) 9727669930</span><br>
+            <span>xt9developers01@gmail.com</span><br>
+            <a href="welcome.html"><span>www.xt9developers.in</span></a>
+        </div>
+    </div>
+
+</section>
+<p class="copy">&copy;2025 Reserved by XT9 Developers</p>
+
+</body>
+</html>

@@ -8,41 +8,17 @@
     <h:head>
         <title>User Management - Admin</title>
         <h:outputStylesheet name="css/dashboard.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
-<f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
+        <f:metadata>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
 
-        <div class="sidebar">
-            <h:form>
-                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-            </h:form>
-
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Dashboard</h:link></li>
-                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
-                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link active">User Management</h:link></li>
-                                        <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
-
-                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
-                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
-                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout"
-                                   action="#{loginBean.logout}"
-                                   onclick="return confirm('Are you sure?');"
-                                   styleClass="logout-btn"/>
-                </h:form>
-            </div>
-        </div>
-
+        <ui:include src="/admin/admin_sidebar.xhtml">
+            <ui:param name="activePage" value="manageUsers" />
+        </ui:include>
 
         <div class="main-content">
 
@@ -87,12 +63,16 @@
 
                                             <h:commandButton value="Delete"
                                                              styleClass="delete-btn"
-                                                             action="#{adminDashboardBean.deleteUser(u.userId)}"
-                                                             onclick="return confirm('Delete this user?');" />
+                                                             onclick="return confirm('Are you sure? This will delete user permanently.');"
+                                                             action="#{adminDashboardBean.deleteUser(u.userId)}" /> 
 
+                                          
                                             <h:commandButton value="Change Role"
                                                              styleClass="role-btn"
-                                                             action="#{adminDashboardBean.toggleUserRole(u.userId)}" />
+                                                             action="#{adminDashboardBean.toggleUserRole(u.userId)}"
+                                                             rendered="#{loginBean.loggedUser.userName eq 'admin'}"
+                                                             onclick="return confirm('Change user role?');" />
+
 
                                         </div>
                                     </td>
@@ -110,6 +90,59 @@
 
                 </h:form>
 
+            </div>
+            <!-- ================= COMMENTS TABLE ================= -->
+            <div class="table-box">
+                <h3>All Comments</h3>
+
+                <h:form id="commentForm">
+
+                    <!-- FILTER USERS -->
+                    <h:selectOneMenu value="#{adminDashboardBean.commentFilterUserId}" onchange="submit()">
+                        <f:selectItem itemLabel="All Users" itemValue="0"/>
+                        <f:selectItems value="#{adminDashboardBean.allUsers}" 
+                                       var="u" 
+                                       itemLabel="#{u.fullName}" 
+                                       itemValue="#{u.userId}" />
+                    </h:selectOneMenu>
+
+                    <br/><br/>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>User</th>
+                                <th>Recipe</th>
+                                <th>Comment</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <ui:repeat value="#{adminDashboardBean.filteredComments}" var="c">
+                                <tr>
+                                    <td>#{c.commentId}</td>
+                                    <td>#{c.userId.fullName}</td>
+                                    <td>#{c.recipeId.title}</td>
+                                    <td>#{c.text}</td>
+                                    <td>#{c.createdAt}</td>
+
+                                    <td>
+                                        <!-- DELETE COMMENT -->
+                                        <h:commandButton value="Delete"
+                                                         styleClass="delete-btn"
+                                                         onclick="return confirm('Delete this comment?');"
+                                                         action="#{adminDashboardBean.deleteComment(c.commentId)}" />
+                                    </td>
+                                </tr>
+                            </ui:repeat>
+
+                        </tbody>
+                    </table>
+
+                </h:form>
             </div>
 
         </div>

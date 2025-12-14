@@ -1,9 +1,11 @@
 package cdi;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Named;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.application.FacesMessage;
+import jakarta.inject.Inject;
 
 
 import java.io.Serializable;
@@ -16,6 +18,26 @@ public class ContactBean implements Serializable {
     private String name;
     private String email;
     private String message;
+
+
+    @Inject
+    private LoginBean loginBean;
+
+    @PostConstruct
+    public void init() {
+        if (loginBean != null && loginBean.getLoggedUser() != null) {
+            this.name = loginBean.getLoggedUser().getFullName();
+            this.email = loginBean.getLoggedUser().getEmail();
+        }
+    }
+
+
+
+
+
+
+
+
 
     // ===== GETTERS & SETTERS =====
     public String getName() {

@@ -1,6 +1,7 @@
 package cdi;
 
 import Entity.ActivityLog;
+import Entity.Comments;
 import Entity.Recipes;
 import Entity.Users;
 import ejb.AdminBeanLocal;
@@ -15,8 +16,6 @@ import java.util.List;
 import jakarta.inject.Inject;
 import java.util.Date;
 import java.util.Calendar;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @Named
 @SessionScoped
@@ -34,6 +33,7 @@ public class AdminDashboardBean implements Serializable {
     private int recipePage = 0;
     private final int pageSize = 10;
     // existing fields...
+    private Integer commentFilterUserId = 0;
 
     // 🔽 NEW FIELDS FOR ACTIVITY LOGS
     private String activityFilter = "ALL"; // ALL, TODAY, WEEK, MONTH
@@ -88,16 +88,6 @@ public class AdminDashboardBean implements Serializable {
         return recipePage + 1;
     }
 
-    public String deleteUser(Integer userId) {
-        Users deletedUser = userBean.getUserById(userId);
-
-        adminBean.logActivity(loginBean.getLoggedUser(),
-                "Deleted user: " + deletedUser.getFullName());
-
-        userBean.deleteUser(userId);
-        return "/admin/adminDashboard?faces-redirect=true";
-    }
-
     public String deleteRecipe(Integer recipeId) {
         Recipes recipe = userBean.getRecipeById(recipeId);
 
@@ -118,45 +108,93 @@ public class AdminDashboardBean implements Serializable {
         return userBean.getAllRecipes().size();
     }
 
-    public String toggleUserRole(Integer userId) {
+ public String toggleUserRole(Integer userId) {
 
-// Prevent changing own role
-        if (loginBean.getLoggedUser() != null
-                && loginBean.getLoggedUser().getUserId().equals(userId)) {
+    Users target = userBean.getUserById(userId);
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_WARN,
-                            "You cannot change your own role!", null));
+    // ❌ Block changing role of main admin
+    if (target != null && target.getUserName().equalsIgnoreCase("admin")) {
 
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
-            return "/admin/manageUsers?faces-redirect=true";
-        }
-
-        Users user = userBean.getUserById(userId);
-
-        if (user != null) {
-            if ("admin".equalsIgnoreCase(user.getRole())) {
-                user.setRole("USER");
-            } else {
-                user.setRole("ADMIN");
-            }
-            userBean.updateUser(user);
-            adminBean.logActivity(loginBean.getLoggedUser(),
-                    "Changed role of: " + user.getFullName()
-                    + " to " + user.getRole());
-
-        }
-
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO,
-                        "User role updated!", null));
+        FacesContext.getCurrentInstance().addMessage(
+            null,
+            new FacesMessage(
+                FacesMessage.SEVERITY_ERROR,
+                "You cannot change the main admin's role!",
+                null
+            )
+        );
 
         FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
         return "/admin/manageUsers?faces-redirect=true";
     }
 
+    // ❌ Only the main admin can change roles
+    if (!loginBean.getLoggedUser().getUserName().equalsIgnoreCase("admin")) {
+
+        FacesContext.getCurrentInstance().addMessage(
+            null,
+            new FacesMessage(
+                FacesMessage.SEVERITY_ERROR,
+                "Only the main admin can change user roles!",
+                null
+            )
+        );
+
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        return "/admin/manageUsers?faces-redirect=true";
+    }
+
+    // ❌ Prevent changing own role
+    if (loginBean.getLoggedUser().getUserId().equals(userId)) {
+
+        FacesContext.getCurrentInstance().addMessage(
+            null,
+            new FacesMessage(
+                FacesMessage.SEVERITY_WARN,
+                "You cannot change your own role!",
+                null
+            )
+        );
+
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        return "/admin/manageUsers?faces-redirect=true";
+    }
+
+    // ✔ Continue with role change logic
+    if (target != null) {
+        if ("admin".equalsIgnoreCase(target.getRole())) {
+            target.setRole("USER");
+        } else {
+            target.setRole("ADMIN");
+        }
+
+        userBean.updateUser(target);
+
+        adminBean.logActivity(loginBean.getLoggedUser(),
+                "Changed role of: " + target.getFullName() + " to " + target.getRole());
+    }
+
+    FacesContext.getCurrentInstance().addMessage(
+        null,
+        new FacesMessage(
+            FacesMessage.SEVERITY_INFO,
+            "User role updated!",
+            null
+        )
+    );
+
+    FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+
+    return "/admin/manageUsers?faces-redirect=true";
+}
+
     public List<ActivityLog> getAllActivities() {
-        return getFilteredActivities(); // if you want full filtered list somewhere
+
+        if (!loginBean.getLoggedUser().getUserName().equalsIgnoreCase("admin")) {
+            return List.of(); // return empty list for non-admin username
+        }
+
+        return adminBean.getAllActivities();
     }
 
     public List<ActivityLog> getAllActivitiesPaginated() {
@@ -381,5 +419,69 @@ public class AdminDashboardBean implements Serializable {
             e.printStackTrace();
         }
     }
+
+    public Integer getCommentFilterUserId() {
+        return commentFilterUserId;
+    }
+
+    public void setCommentFilterUserId(Integer commentFilterUserId) {
+        this.commentFilterUserId = commentFilterUserId;
+    }
+
+    public List<Comments> getFilteredComments() {
+        List<Comments> list = userBean.getAllComments();
+
+        if (commentFilterUserId != null && commentFilterUserId != 0) {
+            list.removeIf(c -> !c.getUserId().getUserId().equals(commentFilterUserId));
+        }
+        return list;
+    }
+
+    public List<Comments> getFilteredCommentsPaginated() {
+        return getFilteredComments();
+    }
+
+    public String deleteComment(int commentId) {
+        userBean.deleteComment(commentId);
+
+        FacesContext.getCurrentInstance().addMessage(null,
+                new FacesMessage(FacesMessage.SEVERITY_INFO,
+                        "Comment deleted!", null));
+
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+
+        return "/admin/manageUsers?faces-redirect=true";
+    }
+
+public String deleteUser(Integer userId) {
+
+    Users target = userBean.getUserById(userId);
+
+    // ❌ Block deleting main admin username
+    if (target != null && target.getUserName().equalsIgnoreCase("admin")) {
+
+        FacesContext.getCurrentInstance().addMessage(
+            null,
+            new FacesMessage(
+                FacesMessage.SEVERITY_ERROR,
+                "You cannot delete the main admin account!",
+                null
+            )
+        );
+
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().setKeepMessages(true);
+        return "/admin/manageUsers?faces-redirect=true";
+    }
+
+    // ✔ Log deletion
+    adminBean.logActivity(loginBean.getLoggedUser(),
+            "Deleted user: " + target.getFullName());
+
+    // ✔ Delete user
+    userBean.deleteUser(userId);
+
+    return "/admin/manageUsers?faces-redirect=true";
+}
+
 
 }

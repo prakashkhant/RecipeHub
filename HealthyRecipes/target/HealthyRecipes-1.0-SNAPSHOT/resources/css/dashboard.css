@@ -51,6 +51,9 @@ ul {
     background: rgba(255,255,255,0.20);
     transform: translateX(5px);
 }
+.nav-link i {
+    margin-right: 8px;
+}
 
 /* Logout Button */
 .logout-box {
@@ -74,6 +77,10 @@ ul {
     background: #d63031;
     cursor: pointer;
 }
+.logout-btn i {
+    margin-right: 8px;
+}
+
 
 /* MAIN PAGE CONTENT */
 .main-content {

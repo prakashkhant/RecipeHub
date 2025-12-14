@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:ui="jakarta.faces.facelets">
+
+    <div class="sidebar">
+
+        <h:form>
+            <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
+        </h:form>
+
+        <nav class="menu">
+            <ul>
+
+                <!-- USER DASHBOARD -->
+                <li>
+                    <h:link outcome="/user/userDashboard"
+                            styleClass="#{activePage eq 'dashboard' ? 'nav-link active' : 'nav-link'}">
+                        <i class="fa-solid fa-house"></i>
+                        Dashboard
+                    </h:link>
+                </li>
+                <li>
+                    <h:link outcome="/user/addRecipe"
+                            styleClass="#{activePage eq 'addRecipe' ? 'nav-link active' : 'nav-link'}">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                        Add Recipe
+                    </h:link>
+                </li>
+                <li>
+                    <h:link outcome="/user/updateRecipe"
+                            styleClass="#{activePage eq 'updateRecipe' ? 'nav-link active' : 'nav-link'}">
+                       <i class="fa-solid fa-file-pen"></i>Update Recipe
+               
+                    </h:link>
+                </li>
+                <!-- LIKED RECIPES -->
+                <li>
+                    <h:link outcome="/user/likedRecipes"
+                            styleClass="#{activePage eq 'liked' ? 'nav-link active' : 'nav-link'}">
+                        <i class="fa-solid fa-heart"></i>
+                        Liked Recipes
+                    </h:link>
+                </li>
+
+                <!-- PROFILE -->
+                <li>
+                    <h:link outcome="/user/profile"
+                            styleClass="#{activePage eq 'profile' ? 'nav-link active' : 'nav-link'}">
+                        <i class="fa-solid fa-user"></i>
+                        Profile
+                    </h:link>
+                </li>
+
+                <!-- UPDATE RECIPE (IF USER HAS RECIPES) -->
+
+                <li>
+                    <h:link outcome="/user/activity"
+                            styleClass="#{activePage eq 'myActivity' ? 'nav-link active' : 'nav-link'}">
+                   <i class="fa-solid fa-clock-rotate-left"></i>
+                        My Activity                    </h:link>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- LOGOUT -->
+        <div class="logout-container">
+            <h:form>
+                <h:commandLink action="#{loginBean.logout}"
+                               onclick="return confirm('Logout?');"
+                               styleClass="logout-btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </h:commandLink>
+            </h:form>
+        </div>
+
+    </div>
+
+</ui:composition>

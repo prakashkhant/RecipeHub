@@ -3,11 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
-      xmlns:pt="jakarta.faces.passthrough">
+      xmlns:pt="jakarta.faces.passthrough"
+      xmlns:ui="jakarta.faces.facelets">
 
     <h:head>
         <title>Edit Recipe</title>
         <h:outputStylesheet name="css/dashboard.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
@@ -15,26 +17,9 @@
             <f:event type="preRenderView" listener="#{loginBean.redirectIfNotLoggedIn}" />
         </f:metadata>
 
-        <div class="sidebar">
-            <h:link outcome="/home" styleClass="brand">Healthy Recipe</h:link>
-
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
-                    <li><h:link outcome="/user/addRecipe" styleClass="nav-link active">Add Recipe</h:link></li>
-                    <li><h:link outcome="/user/profile" styleClass="nav-link">Profile</h:link></li>
-                    <li><h:link outcome="/user/likedRecipes" styleClass="nav-link ">Liked Recipes</h:link></li>
-                    <li><h:link outcome="/user/activity" styleClass="nav-link">📌 My Activity</h:link></li>
-
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout" action="#{loginBean.logout}" class="logout-btn"/>
-                </h:form>
-            </div>
-        </div>
+<ui:include src="/user/user_sidebar.xhtml">
+    <ui:param name="activePage" value="updateRecipe" />
+</ui:include>
 
         <div class="main-content">
 

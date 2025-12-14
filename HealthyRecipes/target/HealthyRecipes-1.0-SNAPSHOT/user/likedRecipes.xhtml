@@ -8,6 +8,7 @@
     <h:head>
         <title>Liked Recipes - Healthy Recipes</title>
         <h:outputStylesheet name="css/dashboard.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
@@ -16,32 +17,9 @@
 </f:metadata>
 
         <!-- SIDEBAR -->
-        <div class="sidebar">
-            <h:form>
-                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-            </h:form>
-
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/user/userDashboard" styleClass="nav-link">Dashboard</h:link></li>
-                    <li><h:link outcome="/user/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
-                    <li><h:link outcome="/user/profile" styleClass="nav-link">Update Profile</h:link></li>
-                    <li><h:link outcome="/user/likedRecipes" styleClass="nav-link active">Liked Recipes</h:link></li>
-               <li><h:link outcome="/user/activity" styleClass="nav-link">📌 My Activity</h:link></li>
-
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout"
-                                   action="#{loginBean.logout}"
-                                   onclick="return confirm('Logout?');"
-                                   styleClass="logout-btn"/>
-                </h:form>
-            </div>
-        </div>
-
+   <ui:include src="/user/user_sidebar.xhtml">
+            <ui:param name="activePage" value="liked" />
+        </ui:include>
         <!-- MAIN CONTENT -->
         <div class="main-content">
 

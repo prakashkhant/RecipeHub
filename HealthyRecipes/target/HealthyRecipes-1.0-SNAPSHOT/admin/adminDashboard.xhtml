@@ -8,40 +8,16 @@
     <h:head>
         <title>Admin Dashboard - Healthy Recipes</title>
         <h:outputStylesheet name="css/dashboard.css" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
         <f:metadata>
-    <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
-</f:metadata>
-
-        <div class="sidebar">
-            <h:form>
-                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-            </h:form>
-
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link active">Admin Dashboard</h:link></li>
-                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
-                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">User Management</h:link></li>
-                                        <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
-
-                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
-                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
-                    <li><h:link outcome="/admin/profile" styleClass="nav-link">Profile</h:link></li>
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout"
-                                   action="#{loginBean.logout}"
-                                   onclick="return confirm('Are you sure?');"
-                                   styleClass="logout-btn" />
-                </h:form>
-            </div>
-        </div>
+            <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
+        </f:metadata>
+        <ui:include src="/admin/admin_sidebar.xhtml">
+            <ui:param name="activePage" value="dashboard" />
+        </ui:include>
 
         <div class="main-content">
 

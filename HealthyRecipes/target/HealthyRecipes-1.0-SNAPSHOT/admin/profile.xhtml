@@ -3,11 +3,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
-      xmlns:pt="jakarta.faces.passthrough">
+      xmlns:pt="jakarta.faces.passthrough"
+      xmlns:ui="jakarta.faces.facelets">
 
     <h:head>
         <title>Admin Profile - Healthy Recipes</title>
         <h:outputStylesheet name="css/dashboard.css" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </h:head>
 
     <h:body>
@@ -15,33 +17,9 @@
     <f:event type="preRenderView" listener="#{loginBean.redirectIfNotAdmin}" />
 </f:metadata>
 
-        <div class="sidebar">
-            <h:form>
-                <h:link outcome="/home" styleClass="brand">Healthy Recipes</h:link>
-            </h:form>
-
-            <nav class="menu">
-                <ul>
-                    <li><h:link outcome="/admin/adminDashboard" styleClass="nav-link">Dashboard</h:link></li>
-                    <li><h:link outcome="/admin/addRecipe" styleClass="nav-link">Add Recipe</h:link></li>
-                    <li><h:link outcome="/admin/manageUsers" styleClass="nav-link">Users Management</h:link></li>
-                                        <li><h:link outcome="/admin/manageCategories" styleClass="nav-link ">Manage Categories</h:link></li>
-
-                    <li><h:link outcome="/admin/adminActivity" styleClass="nav-link">📌 My Activity</h:link></li>
-                    <li><h:link outcome="/admin/allActivity" styleClass="nav-link">All Activity</h:link></li>
-                    <li><h:link outcome="/admin/profile" styleClass="nav-link active">Profile</h:link></li>
-                </ul>
-            </nav>
-
-            <div class="logout-container">
-                <h:form>
-                    <h:commandLink value="Logout"
-                                   action="#{loginBean.logout}"
-                                   onclick="return confirm('Are you sure?');"
-                                   styleClass="logout-btn"/>
-                </h:form>
-            </div>
-        </div>
+<ui:include src="/admin/admin_sidebar.xhtml">
+    <ui:param name="activePage" value="profile" />
+</ui:include>
 
         <div class="main-content">
 
